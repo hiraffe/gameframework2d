@@ -21,7 +21,7 @@ void entity_system_init(Uint32 maxEnts)
 	}
 	if (!maxEnts)
 	{
-		slog("cannot initialize entity system for zero entities");
+		slog("cannot initialize entity system for 0 entities");
 		return;
 	}
 	entity_system.entity_list = gfc_allocate_array(sizeof(Entity), maxEnts);
@@ -40,10 +40,7 @@ void entity_system_close()
 	if (entity_system.entity_list)
 	{
 		entity_system_free_all(NULL);
-		if (entity_system.entity_list)
-		{
-			free(entity_system.entity_list);
-		}
+		if (entity_system.entity_list) free(entity_system.entity_list);
 		memset(&entity_system, 0, sizeof(EntitySystem));
 		//entity_system.entity_list = NULL;
 	}
@@ -81,10 +78,12 @@ Entity* entity_new()
 void entity_free(Entity* self)
 {
 	if (!self) return;
-	
-	gf2d_sprite_free(self->sprite);
-	//amything else we allocate for our entity would get cleaned up here
+	//anything else we allocate for our entity would get cleaned up here
 	if (self->free) self->free(self->data);
+	if (self->sprite)
+	{
+		gf2d_sprite_free(self->sprite);
+	}
 }
 
 void entity_think(Entity* self)
@@ -99,7 +98,7 @@ void entity_system_think()
 	int i;
 	for (i=0; i<entity_system.entity_max; i++)
 	{
-		if (entity_system.entity_list[i]._inuse) continue;
+		if (!entity_system.entity_list[i]._inuse) continue;
 		entity_think(&entity_system.entity_list[i]);
 	}
 }
@@ -116,7 +115,7 @@ void entity_system_update()
 	int i;
 	for (i = 0; i < entity_system.entity_max; i++)
 	{
-		if (entity_system.entity_list[i]._inuse) continue;
+		if (!entity_system.entity_list[i]._inuse) continue;
 		entity_update(&entity_system.entity_list[i]);
 	}
 }
@@ -136,6 +135,13 @@ void entity_draw(Entity* self)
 		NULL,
 		NULL,
 		(Uint32)self->frame);
+	/*
+	if (_DRAWBOUNDS)
+	{
+		gfc_rect_copy(sect, self->bounds);
+		gfc_vector2d_add(rect, rect, self->position);
+	}
+	*/
 }
 
 void entity_system_draw()
@@ -143,7 +149,16 @@ void entity_system_draw()
 	int i;
 	for (i = 0; i < entity_system.entity_max; i++)
 	{
-		if (entity_system.entity_list[i]._inuse) continue;
+		if (!entity_system.entity_list[i]._inuse) continue;
 		entity_draw(&entity_system.entity_list[i]);
 	}
 }
+
+/*
+void entity_move(Entity* self)
+{
+	gfc_vector2d_add(self->position, self->position, self->velocity);
+	gfc_vector2d_add(self->velocity, self->velocity, self->acceleration);
+	//chekc for collision
+}
+*/

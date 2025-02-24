@@ -1,4 +1,5 @@
 #include "simple_logger.h"
+#include "gfc_input.h"
 
 #include "player.h"
 
@@ -6,17 +7,22 @@ void player_think(Entity* self);
 void player_update(Entity* self);
 void player_free(Entity* self);
 
+typedef struct
+{
+	int xp, neededxp;
+	int inventory[10];
+}PlayerEntityData;
 
-Entity* player_new_entity(Entity* self)
+Entity* player_new()
 {
 	Entity* self;
+	PlayerEntityData* data;
 	self = entity_new();
 	if (!self)
 	{
 		slog("failed to spawn a new player entity");
 		return NULL;
 	}
-	//gfc_vector2d_copy(self->position, position);
 	self->sprite = gf2d_sprite_load_all(
 		"images/ed210.png",
 		128,
@@ -24,37 +30,63 @@ Entity* player_new_entity(Entity* self)
 		16,
 		0);
 	self->frame = 0;
-	self->position = vector2d(0, 0);
+	self->position = gfc_vector2d(0,0);
 
 	self->think = player_think;
 	self->update = player_update;
 	self->free = player_free;
+	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
+	if (data)
+	{
+		data->neededxp = 1000;
+	}
+	self->data = data;
 	return self;
 }
-
 
 void player_think(Entity* self)
 {
 	if (!self) return;
-	if(gfc_input_command_down("right")) {
-		self->velocity.x = 5.0;
+	const Uint8 *keys = SDL_GetKeyboardState(NULL);
+
+	if (keys[SDL_SCANCODE_W]) {
+		self->position.y -= 3;
 	}
-	else if (gfc_input_command_down("left")) {
-		self->velocity.x = -5.0;
+	else if (keys[SDL_SCANCODE_A]) {
+		self->position.x -= 3;
+	}
+	else if (keys[SDL_SCANCODE_S]) {
+		self->position.y += 3;
+	}
+	else if (keys[SDL_SCANCODE_D]) {
+		self->position.x += 3;
+	}
+	if (self->data)
+	{
+		self->data = (PlayerEntityData*)self->data;
+		//do stuff with data
+	}
+
+	/*if (gfc_input_command_down("d")) {
+		self->velocity.x = 1.0;
+		slog("right");
+	}
+	else if (gfc_input_command_down("a")) {
+		self->velocity.x = -1.0;
 	}
 	else {
 		self->velocity.x = 0;
 	}
 
-	if (gfc_input_command_down("down")) {
-		self->velocity.y = 5.0;
+	if (gfc_input_command_down("s")) {
+		self->velocity.y = 1.0;
 	}
-	else if (gfc_input_command_down("up")) {
-		self->velocity.y = -5.0;
+	else if (gfc_input_command_down("w")) {
+		self->velocity.y = -1.0;
 	}
 	else {
 		self->velocity.y = 0;
-	}
+	}*/
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 	if (self->position.x < 0) self->position.x = 0;
 	if (self->position.y < 0) self->position.y = 0;
@@ -63,9 +95,18 @@ void player_think(Entity* self)
 void player_update(Entity* self)
 {
 	if (!self) return;
+	self->frame += 0.1;
+	if (self->frame >= 16) self->frame = 0;
+
+	gfc_vector2d_add(self->position, self->position, self->velocity);
 }
 
 void player_free(Entity* self)
 {
-	if (!self) return;
+	PlayerEntityData* data;
+	if (!self || !self->data) return;
+	data = self->data;
+	//other cleanup
+	free(data);
+	self->data = NULL;
 }
