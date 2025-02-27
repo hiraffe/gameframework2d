@@ -52,7 +52,6 @@ int main(int argc, char * argv[])
     /*main game loop*/
     while(!done)
     {
-        //gfc_input_update();
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/

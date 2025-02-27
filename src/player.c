@@ -1,6 +1,7 @@
 #include "simple_logger.h"
 #include "gfc_input.h"
 
+#include "projectile.h"
 #include "player.h"
 
 void player_think(Entity* self);
@@ -30,7 +31,7 @@ Entity* player_new()
 		16,
 		0);
 	self->frame = 0;
-	self->position = gfc_vector2d(0,0);
+	self->position = gfc_vector2d(500,450);
 
 	self->think = player_think;
 	self->update = player_update;
@@ -42,6 +43,23 @@ Entity* player_new()
 	}
 	self->data = data;
 	return self;
+}
+
+void player_attack(Entity* self)
+{
+	/*Uint32 now;
+	Uint32 then;
+	Uint32 delay;
+	Uint32 diff;
+	then = now;
+	now = SDL_GetTicks();
+	diff = now - then;
+	if (diff > delay)
+	{
+		projectile_new(self->position);
+	}*/
+
+	projectile_new(self->position);
 }
 
 void player_think(Entity* self)
@@ -65,6 +83,10 @@ void player_think(Entity* self)
 	{
 		self->data = (PlayerEntityData*)self->data;
 		//do stuff with data
+	}
+
+	if (keys[SDL_SCANCODE_SPACE]) {
+		player_attack(self);
 	}
 
 	/*if (gfc_input_command_down("d")) {
