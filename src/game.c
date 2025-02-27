@@ -8,6 +8,7 @@
 #include "entity.h"
 #include "player.h"
 #include "monster.h"
+//#include "world.h"
 
 int main(int argc, char * argv[])
 {
@@ -15,6 +16,7 @@ int main(int argc, char * argv[])
     int done = 0;
     const Uint8 * keys;
     Sprite *sprite;
+    //World* world;
     
     int mx,my;
     float mf = 0;
@@ -45,10 +47,12 @@ int main(int argc, char * argv[])
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     slog("press [escape] to quit");
     player = player_new(); //add player
-    monster = monster_new(player); //add monster
+    //world = world_test_new();
+    monster = monster_new(); //add monster
     /*main game loop*/
     while(!done)
     {
+        //gfc_input_update();
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
@@ -56,13 +60,15 @@ int main(int argc, char * argv[])
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
 
-        entity_system_think();
-        entity_system_update();
+            entity_system_think();
+            entity_system_update();
+            //camera_bounds_check();
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,gfc_vector2d(0,0));
+            //world_draw(world);
 
             //entities in the middle
             entity_system_draw();
@@ -85,6 +91,7 @@ int main(int argc, char * argv[])
     }
     entity_free(player);
     entity_free(monster);
+    //world_free(world);
     slog("---==== END ====---");
     return 0;
 }
