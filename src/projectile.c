@@ -30,6 +30,9 @@ Entity* projectile_new(GFC_Vector2D start)
 	return self;
 }
 
+//void projectile_hit(Entity *self)
+//free if it hits something
+
 
 void projectile_think(Entity* self)
 {
@@ -40,6 +43,9 @@ void projectile_think(Entity* self)
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 	if (self->position.x < 0) self->position.x = 0;
 	if (self->position.y < 0) self->position.y = 0;
+
+	//if projectile hits a wall or enemy, it dies
+	//code to check what type of thing it hits?
 }
 
 void projectile_update(Entity* self)

@@ -1,6 +1,7 @@
 #include "simple_logger.h"
 
 #include "monster.h"
+#include "player.h"
 
 void monster_think(Entity* self);
 void monster_update(Entity* self);
@@ -33,12 +34,16 @@ Entity* monster_new()
 
 void monster_think(Entity* self)
 {
+	//have it change for each different guy idk
 	if (!self) return;
 	
 	GFC_Vector2D dir = { 0 };
 	Sint32 mx = 0, my = 0;
-	if (!self) return;
-	SDL_GetMouseState(&mx, &my);
+	Entity* player = player_get_the();
+	if (!self || !player) return;
+	//SDL_GetMouseState(&mx, &my);
+	mx = player->position.x;
+	my = player->position.y;
 	if (self->position.x < mx) dir.x = 1;
 	if (self->position.y < my) dir.y = 1;
 	if (self->position.x > mx) dir.x = -1;

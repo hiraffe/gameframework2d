@@ -4,20 +4,34 @@
 #include "projectile.h"
 #include "player.h"
 
+static Entity* thePlayer = NULL;
+
 void player_think(Entity* self);
 void player_update(Entity* self);
 void player_free(Entity* self);
+
+Entity* player_get_the()
+{
+	return thePlayer;
+}
 
 typedef struct
 {
 	int xp, neededxp;
 	int inventory[10];
+	int lastAttack;
+	int cooldown;
 }PlayerEntityData;
 
 Entity* player_new()
 {
 	Entity* self;
 	PlayerEntityData* data;
+	if (thePlayer)
+	{
+		//gfc_vector2d_copy(self->position, position);
+		return thePlayer;
+	}
 	self = entity_new();
 	if (!self)
 	{
@@ -40,25 +54,27 @@ Entity* player_new()
 	if (data)
 	{
 		data->neededxp = 1000;
+		data->cooldown = 200;
+		//data->lastAttack = 0;
 	}
 	self->data = data;
+	thePlayer = self; //
 	return self;
 }
 
 void player_attack(Entity* self)
 {
-	/*Uint32 now;
-	Uint32 then;
-	Uint32 delay;
-	Uint32 diff;
-	then = now;
-	now = SDL_GetTicks();
-	diff = now - then;
-	if (diff > delay)
-	{
-		projectile_new(self->position);
-	}*/
+	if (!self) return;
 
+	PlayerEntityData* data = (PlayerEntityData*)self->data;
+	Uint32 curr = SDL_GetTicks();
+
+	if (curr - data->lastAttack < data->cooldown)
+	{
+		return;
+	}
+
+	data->lastAttack = curr;
 	projectile_new(self->position);
 }
 
@@ -68,16 +84,16 @@ void player_think(Entity* self)
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
 	if (keys[SDL_SCANCODE_W]) {
-		self->position.y -= 3;
+		self->position.y -= 5;
 	}
 	else if (keys[SDL_SCANCODE_A]) {
-		self->position.x -= 3;
+		self->position.x -= 5;
 	}
 	else if (keys[SDL_SCANCODE_S]) {
-		self->position.y += 3;
+		self->position.y += 5;
 	}
 	else if (keys[SDL_SCANCODE_D]) {
-		self->position.x += 3;
+		self->position.x += 5;
 	}
 	if (self->data)
 	{

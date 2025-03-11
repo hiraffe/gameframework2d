@@ -1,11 +1,58 @@
+#include "simple_json.h"
 #include "simple_logger.h"
 
 #include "world.h"
+/*
+void world_tile_layer(World *world)
+{
+	int i, j;
+	int index;
+	GFC_Vector2D position;
+	Uint32 frame;
+	if (world) return;
 
+	if (world->tileLayer)
+	{
+		gf2d_sprite_free(world->tileLayer);
+	}
+	world->tileLayer = gf2d_sprite_new();
+
+	SDL_CreateRGBSurface(
+		Uint32 flags, 
+		int width, 
+		int height, 
+		int depth,
+		Uint32 Rmask, 
+		Uint32 Gmask, 
+		Uint32 Bmask, 
+		Uint32 Amask);
+
+	for (j = 0; j < world->tileMapSize.y; j++)
+	{
+		for (i = 0; i < world->tileMapSize.x; i++)
+		{
+			index = i + (j * world->tileMapSize.x);
+			if (world->tileMap[index] == 0) continue;
+
+			position.x = i * world->tileSet->frame_w;
+			position.y = j * world->tileSet->frame_h;
+			frame = world->tileMap[index] - 1;
+
+			gf2d_sprite_draw_to_surface(
+				world->tileSet,
+				position,
+				NULL,
+				NULL,
+				frame,
+				world->tileLayer);
+		}
+	}
+}
+*/
 World* world_test_new()
 {
 	int i, width = 75, height = 45;
-	GFC_Vector2D size;
+	GFC_Vector2I size;
 	size.x = width;
 	size.y = height;
 	
@@ -32,21 +79,40 @@ World* world_test_new()
 	}
 	return world;
 }
-
-World *world_new(GFC_Vector2D mapSize)
+/*
+World* world_new()
 {
 	World* world;
+	world = gfc_allocate_array(sizeof(World), 1);
+	if (!world)
+	{
+		slog("ERROR: failed to allocate world");
+		return NULL;
+	}
+	return world;
+}
+*/
+
+World *world_new(GFC_Vector2I mapSize)
+{
+	World* world;
+	world = gfc_allocate_array(sizeof(World), 1);
+	if (!world)
+	{
+		slog("failed to allocate a new world");
+		return NULL;
+	}
 
 	if ((!mapSize.x) || (!mapSize.y))
 	{
 		slog("cannot make a world with no tile width or height");
 		return NULL;
 	}
-		
-	world = gfc_allocate_array(sizeof(World), 1);
-	if (!world)
+	world->tileMap = gfc_allocate_array(sizeof(Uint8), mapSize.x * mapSize.y);
+	if (!world->tileMap)
 	{
-		slog("failed to allocate a new world");
+		slog("failed toallcate memory for tile map");
+		free(world);
 		return NULL;
 	}
 	//all boilerplate code would go here
@@ -101,15 +167,15 @@ void world_draw(World* world)
 		}
 	}
 }
-
-/*void world_load(const char *filename)
+/*
+void world_load(const char *filename)
 {
 	SJson* row;
 	int rowCount, columnCount;
 	int i, j;
 	SJson* column;
 	const char* string = NULL;
-	Sjson* json;
+	SJson* json;
 	World* world;
 	if (!filename) return NULL;
 	json = sj_load(filename);
@@ -121,10 +187,10 @@ void world_draw(World* world)
 	world = world_new();
 	if (!world) return NULL;
 	row = sj_object_get_value(json, "tileMap");
-	rowCount = sj_array_get_count(rows);
+	rowCount = sj_array_get_count(row);
 	if (rowCount)
 	{
-		row = sj_array_get_nth(rows, j);
+		//row = sj_array_get_nth(row, j);
 		if (!row)
 		{
 			slog("world %s, tileMap missing rows", filename);
@@ -143,12 +209,12 @@ void world_draw(World* world)
 		}
 		for (j = 0; j < rowCount; j++)
 		{
-			row = sj_array_get_nth(rows, j);
+			row = sj_array_get_nth(row, j);
 			if (!row) continue;
 			columnCount = sj_array_get_count(row);
 			world->tileMapSize.x = columnCount;
 			world->tileMapSize.y = rowCount;
-			for (i = 0; i < columnCount, i++)
+			for (i = 0; i < columnCount; i++)
 			{
 				column = sj_array_get_nth(row, i);
 				if (!column) continue;
@@ -160,7 +226,7 @@ void world_draw(World* world)
 	string = sj_object_get_string(json, "name");
 	if (string) gfc_line_cpy(world->name, string);
 
-	string = sj_onject_get_string(json, "background");
+	string = sj_object_get_string(json, "background");
 	if (string)
 	{
 		world->background = gf2d_sprite_load_image(string);
@@ -188,16 +254,5 @@ void world_free(World* world)
 	}
 	free(world);
 }
-
-World* world_new()
-{
-	World* world;
-	World = gfc_allocate_array(sizeOf(World), 1);
-	if (!world)
-	{
-		slog("ERROR: failed to allocate world");
-		return NULL;
-	}
-	return world;
-}
 */
+

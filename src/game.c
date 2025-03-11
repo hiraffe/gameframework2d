@@ -8,7 +8,7 @@
 #include "entity.h"
 #include "player.h"
 #include "monster.h"
-//#include "world.h"
+#include "world.h"
 
 int main(int argc, char * argv[])
 {
@@ -16,7 +16,7 @@ int main(int argc, char * argv[])
     int done = 0;
     const Uint8 * keys;
     Sprite *sprite;
-    //World* world;
+    World* world;
     
     int mx,my;
     float mf = 0;
@@ -47,7 +47,7 @@ int main(int argc, char * argv[])
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     slog("press [escape] to quit");
     player = player_new(); //add player
-    //world = world_test_new();
+    world = world_test_new();
     monster = monster_new(); //add monster
     /*main game loop*/
     while(!done)
@@ -67,7 +67,7 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,gfc_vector2d(0,0));
-            //world_draw(world);
+            world_draw(world);
 
             //entities in the middle
             entity_system_draw();
@@ -90,7 +90,7 @@ int main(int argc, char * argv[])
     }
     entity_free(player);
     entity_free(monster);
-    //world_free(world);
+    world_free(world);
     slog("---==== END ====---");
     return 0;
 }
