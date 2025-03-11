@@ -50,11 +50,12 @@ Entity* player_new()
 	self->think = player_think;
 	self->update = player_update;
 	self->free = player_free;
+
 	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
 	if (data)
 	{
 		data->neededxp = 1000;
-		data->cooldown = 200;
+		data->cooldown = 500;
 		//data->lastAttack = 0;
 	}
 	self->data = data;
@@ -62,7 +63,7 @@ Entity* player_new()
 	return self;
 }
 
-void player_attack(Entity* self)
+void player_attack(Entity* self, ProjectileDir dir)
 {
 	if (!self) return;
 
@@ -75,7 +76,7 @@ void player_attack(Entity* self)
 	}
 
 	data->lastAttack = curr;
-	projectile_new(self->position);
+	spawn_projectile(self->position, dir);
 }
 
 void player_think(Entity* self)
@@ -101,8 +102,17 @@ void player_think(Entity* self)
 		//do stuff with data
 	}
 
-	if (keys[SDL_SCANCODE_SPACE]) {
-		player_attack(self);
+	if (keys[SDL_SCANCODE_UP]) {
+		player_attack(self, PT_up);
+	}
+	else if (keys[SDL_SCANCODE_DOWN]) {
+		player_attack(self, PT_down);
+	}
+	else if (keys[SDL_SCANCODE_LEFT]) {
+		player_attack(self, PT_left);
+	}
+	else if (keys[SDL_SCANCODE_RIGHT]) {
+		player_attack(self, PT_right);
 	}
 
 	/*if (gfc_input_command_down("d")) {

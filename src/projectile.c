@@ -6,9 +6,10 @@ void projectile_think(Entity* self);
 void projectile_update(Entity* self);
 void projectile_free(Entity* self);
 
-Entity* projectile_new(GFC_Vector2D start)
+Entity* projectile_new(GFC_Vector2D start, ProjectileDir dir)
 {
 	Entity* self;
+	ProjectileData* data;
 	self = entity_new();
 	if (!self)
 	{
@@ -27,7 +28,21 @@ Entity* projectile_new(GFC_Vector2D start)
 	self->think = projectile_think;
 	self->update = projectile_update;
 	self->free = projectile_free;
+
+	data = gfc_allocate_array(sizeof(ProjectileData), 1);
+	if (data)
+	{
+		data->direction = dir;
+	}
+	self->data = data;
 	return self;
+}
+
+void spawn_projectile(GFC_Vector2D start, ProjectileDir dir) 
+{
+	//if double, double, if triple, triple
+	Entity* projectile = projectile_new(start, dir);
+	if (!projectile) return;
 }
 
 //void projectile_hit(Entity *self)
@@ -38,7 +53,24 @@ void projectile_think(Entity* self)
 {
 	if (!self) return;
 
-	self->velocity.y = -5.0;
+	ProjectileData* data = (ProjectileData*)self->data;
+	switch (data->direction)
+	{
+		case PT_up:
+			self->velocity.y = -5.0;
+			break;
+		case PT_down:
+			self->velocity.y = 5.0;
+			break;
+		case PT_left:
+			self->velocity.x = -5.0;
+			break;
+		case PT_right:
+			self->velocity.x = 5.0;
+			break;
+		default:
+			self->velocity.y = -5.0;
+	}
 
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 	if (self->position.x < 0) self->position.x = 0;

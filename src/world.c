@@ -1,15 +1,20 @@
 #include "simple_json.h"
 #include "simple_logger.h"
 
+#include "gf2d_graphics.h"
+//#include "gfc_vector.h"
+
 #include "world.h"
-/*
+
 void world_tile_layer(World *world)
 {
 	int i, j;
-	int index;
-	GFC_Vector2D position;
+	Uint32 index;
 	Uint32 frame;
-	if (world) return;
+	GFC_Vector2D position;
+	if (!world) return;
+
+	if (!world->tileSet) return;
 
 	if (world->tileLayer)
 	{
@@ -17,15 +22,18 @@ void world_tile_layer(World *world)
 	}
 	world->tileLayer = gf2d_sprite_new();
 
-	SDL_CreateRGBSurface(
-		Uint32 flags, 
-		int width, 
-		int height, 
-		int depth,
-		Uint32 Rmask, 
-		Uint32 Gmask, 
-		Uint32 Bmask, 
-		Uint32 Amask);
+	world->tileLayer->surface = gf2d_graphics_create_surface(
+		world->tileMapSize.x * world->tileSet->frame_w,
+		world->tileMapSize.y * world->tileSet->frame_h);
+
+	world->tileLayer->frame_w = world->tileMapSize.x * world->tileSet->frame_w;
+	world->tileLayer->frame_h = world->tileMapSize.y * world->tileSet->frame_h;
+
+	if (!world->tileLayer->surface)
+	{
+		slog("failed to create tileLayer surface");
+		return;
+	}
 
 	for (j = 0; j < world->tileMapSize.y; j++)
 	{
@@ -44,11 +52,17 @@ void world_tile_layer(World *world)
 				NULL,
 				NULL,
 				frame,
-				world->tileLayer);
+				world->tileLayer->surface);
 		}
 	}
+	world->tileLayer->texture = SDL_CreateTextureFromSurface(gf2d_graphics_get_renderer(), world->tileLayer->surface);
+	if (!world->tileLayer->texture)
+	{
+		slog("failed to convert world tile layer to texture");
+		return;
+	}
 }
-*/
+
 World* world_test_new()
 {
 	int i, width = 75, height = 45;
@@ -77,21 +91,9 @@ World* world_test_new()
 		world->tileMap[i*width] = 1;
 		world->tileMap[i*width + (width-1)] = 1;
 	}
+	world_tile_layer(world);
 	return world;
 }
-/*
-World* world_new()
-{
-	World* world;
-	world = gfc_allocate_array(sizeof(World), 1);
-	if (!world)
-	{
-		slog("ERROR: failed to allocate world");
-		return NULL;
-	}
-	return world;
-}
-*/
 
 World *world_new(GFC_Vector2I mapSize)
 {
@@ -129,23 +131,17 @@ void world_free(World* world)
 
 	gf2d_sprite_free(world->background);
 	gf2d_sprite_free(world->tileSet);
+	gf2d_sprite_free(world->tileLayer);
 	if (world->tileMap) free(world->tileMap);
 	free(world);
 }
 
 void world_draw(World* world)
 {
-	int i, j;
-	int index;
-	int frame;
-	GFC_Vector2D position;
-	GFC_Vector2D bg;
 	if (!world) return;
-
-	bg.x = 0;
-	bg.y = 0;
-	gf2d_sprite_draw_image(world->background, bg);
-	if (!world->tileSet) return;
+	gf2d_sprite_draw_image(world->background, gfc_vector2d(0,0));
+	gf2d_sprite_draw_image(world->tileLayer, gfc_vector2d(0, 0));
+	/*
 	for (j = 0; j < world->tileMapSize.y; j++)
 	{
 		for (i = 0; i< world->tileMapSize.x; i++)
@@ -165,8 +161,22 @@ void world_draw(World* world)
 				NULL,
 				frame);
 		}
-	}
+	}*/
 }
+
+/*
+World* world_new()
+{
+	World* world;
+	world = gfc_allocate_array(sizeof(World), 1);
+	if (!world)
+	{
+		slog("ERROR: failed to allocate world");
+		return NULL;
+	}
+	return world;
+}
+*/
 /*
 void world_load(const char *filename)
 {
