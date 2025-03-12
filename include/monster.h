@@ -3,11 +3,25 @@
 
 #include "entity.h"
 
+typedef enum
+{
+	MT_red,		// follows you
+	MT_blue,	// you can't move if it touches you
+	MT_orange,	// you have to move if it touches you
+	MT_green,	// can't die
+	MT_yellow	// normal
+}MonsterType;
+
+typedef struct
+{
+	MonsterType type;
+}MonsterEntityData;
+
 /**
  * @brief spawn a new player entity
  * @param position where to spawn it
  * @return NULL on error, or a pointer to the spawned player entity
  */
-Entity* monster_new();
+Entity* monster_new(MonsterType type);
 
 #endif

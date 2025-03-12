@@ -7,9 +7,10 @@ void monster_think(Entity* self);
 void monster_update(Entity* self);
 void monster_free(Entity* self);
 
-Entity* monster_new()
+Entity* monster_new(MonsterType type)
 {
 	Entity* self;
+	MonsterEntityData* data;
 	self = entity_new();
 	if (!self)
 	{
@@ -17,37 +18,76 @@ Entity* monster_new()
 		return NULL;
 	}
 	self->sprite = gf2d_sprite_load_all(
-		"images/ed210.png",
+		"images/space_bug_top.png",
 		128,
 		128,
 		16,
 		0);
 	self->frame = 0;
-	self->position = gfc_vector2d(100, 100);
+	self->position = gfc_vector2d(0, 0);
 
 	self->think = monster_think;
 	self->update = monster_update;
 	self->free = monster_free;
+
+	data = gfc_allocate_array(sizeof(MonsterEntityData), 1);
+	if (data)
+	{
+		data->type = type;
+		switch (type)
+		{
+		case MT_blue:
+			self->position = gfc_vector2d(0, (rand() % 700));
+			break;
+		case MT_orange:
+			self->position = gfc_vector2d(1000, (rand() % 700));
+			break;
+		default:
+			self->position = gfc_vector2d((rand() % 1000) + 1, 0);
+		}
+	}
+	self->data = data;
+
 	return self;
 }
 
 
 void monster_think(Entity* self)
 {
-	//have it change for each different guy idk
 	if (!self) return;
+	MonsterEntityData* data = (MonsterEntityData*)self->data;
 	
 	GFC_Vector2D dir = { 0 };
-	Sint32 mx = 0, my = 0;
-	Entity* player = player_get_the();
-	if (!self || !player) return;
-	//SDL_GetMouseState(&mx, &my);
-	mx = player->position.x;
-	my = player->position.y;
-	if (self->position.x < mx) dir.x = 1;
-	if (self->position.y < my) dir.y = 1;
-	if (self->position.x > mx) dir.x = -1;
-	if (self->position.y > my) dir.y = -1;
+
+	if (data->type == MT_yellow)
+	{		
+		dir.y = 1;
+		if (self->position.y > 720) //length of window
+		{
+			//monster_free(self);
+		}
+	}
+	else if (data->type == MT_blue)
+	{
+		dir.x = 1;
+	}
+	else if (data->type == MT_orange)
+	{
+		dir.x = -1;
+	}
+	else if (data->type == MT_red)
+	{
+		Sint32 px = 0, py = 0;
+		Entity* player = player_get_the();
+		if (!player) return;
+		//SDL_GetMouseState(&mx, &my);
+		px = player->position.x;
+		py = player->position.y;
+		if (self->position.x < px) dir.x = 1;
+		if (self->position.y < py) dir.y = 1;
+		if (self->position.x > px) dir.x = -1;
+		if (self->position.y > py) dir.y = -1;
+	}
 	gfc_vector2d_normalize(&dir);
 	gfc_vector2d_scale(self->velocity, dir, 3);
 }
@@ -63,6 +103,13 @@ void monster_update(Entity* self)
 
 void monster_free(Entity* self)
 {
-	if (!self) return;
-	entity_free(self);
+	//if (!self) return;
+	//entity_free(self);
+
+	MonsterEntityData* data;
+	if (!self || !self->data) return;
+	data = self->data;
+	//other cleanup
+	free(data);
+	self->data = NULL;
 }

@@ -33,6 +33,11 @@ typedef enum
 	ECL_ALL = 15
 }EntityCollisionLayers;
 
+typedef struct
+{
+	float x, y, w, h;
+}Bounds;
+
 typedef struct Entity_S
 {
 	Uint8			_inuse;			/**<flag for keeping track of memroy usage*/

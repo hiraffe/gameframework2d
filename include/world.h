@@ -18,6 +18,13 @@ typedef struct
 	//GFC_List		entityList;
 }World;
 
+/*
+ * @brief load a world from a config file
+ * @param filename the name of the world file to load
+ * @return NULL on error, or a usable world otherwise
+ */
+World* world_load(const char *filename);
+
 /**
  * @brief test function to see if world is working
  */

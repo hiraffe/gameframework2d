@@ -21,6 +21,7 @@ typedef struct
 	int inventory[10];
 	int lastAttack;
 	int cooldown;
+	PowerUp power;
 }PlayerEntityData;
 
 Entity* player_new()
@@ -55,7 +56,8 @@ Entity* player_new()
 	if (data)
 	{
 		data->neededxp = 1000;
-		data->cooldown = 500;
+		data->cooldown = 400;
+		data->power = PU_reload;
 		//data->lastAttack = 0;
 	}
 	self->data = data;
@@ -70,13 +72,34 @@ void player_attack(Entity* self, ProjectileDir dir)
 	PlayerEntityData* data = (PlayerEntityData*)self->data;
 	Uint32 curr = SDL_GetTicks();
 
+	if (data->power == PU_reload)
+	{
+		data->cooldown = 200;
+	}
+
 	if (curr - data->lastAttack < data->cooldown)
 	{
 		return;
 	}
 
 	data->lastAttack = curr;
-	spawn_projectile(self->position, dir);
+
+	if (data->power == PU_double)
+	{
+		spawn_projectile(self->position, dir, PN_double);
+	}
+	else if (data->power == PU_triple)
+	{
+		spawn_projectile(self->position, dir, PN_triple);
+	}
+	else if (data->power == PU_quad)
+	{
+		spawn_projectile(self->position, PD_all, PN_all);
+	}
+	else
+	{
+		spawn_projectile(self->position, dir, PN_single);
+	}
 }
 
 void player_think(Entity* self)
@@ -103,16 +126,16 @@ void player_think(Entity* self)
 	}
 
 	if (keys[SDL_SCANCODE_UP]) {
-		player_attack(self, PT_up);
+		player_attack(self, PD_up);
 	}
 	else if (keys[SDL_SCANCODE_DOWN]) {
-		player_attack(self, PT_down);
+		player_attack(self, PD_down);
 	}
 	else if (keys[SDL_SCANCODE_LEFT]) {
-		player_attack(self, PT_left);
+		player_attack(self, PD_left);
 	}
 	else if (keys[SDL_SCANCODE_RIGHT]) {
-		player_attack(self, PT_right);
+		player_attack(self, PD_right);
 	}
 
 	/*if (gfc_input_command_down("d")) {

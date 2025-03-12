@@ -23,7 +23,7 @@ int main(int argc, char * argv[])
     Sprite *mouse;
     GFC_Color mouseGFC_Color = gfc_color8(0,255,255,200);
     Entity* player;
-    Entity* monster;
+    Entity* monster1, *monster2, *monster3;
     GFC_InputController* controller;
     
     /*program initializtion*/
@@ -47,8 +47,11 @@ int main(int argc, char * argv[])
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     slog("press [escape] to quit");
     player = player_new(); //add player
+    //world = world_load("maps/testworld.map");
     world = world_test_new();
-    monster = monster_new(); //add monster
+    monster1 = monster_new(MT_yellow); //add monster
+    monster2 = monster_new(MT_blue);
+    monster3 = monster_new(MT_orange);
     /*main game loop*/
     while(!done)
     {
@@ -89,7 +92,9 @@ int main(int argc, char * argv[])
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     entity_free(player);
-    entity_free(monster);
+    entity_free(monster1);
+    entity_free(monster2);
+    entity_free(monster3);
     world_free(world);
     slog("---==== END ====---");
     return 0;

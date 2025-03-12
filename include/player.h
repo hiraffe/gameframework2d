@@ -3,6 +3,16 @@
 
 #include "entity.h"
 
+typedef enum
+{
+	PU_double,
+	PU_triple,
+	PU_quad,
+	PU_speedy,
+	PU_reload,
+	PU_none
+}PowerUp;
+
 /**
  * @brief spawn a new player entity
  * @param position where to spawn it

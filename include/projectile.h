@@ -5,25 +5,25 @@
 
 typedef enum
 {
-	PT_up,
-	PT_down,
-	PT_left,
-	PT_right,
-	PT_all
+	PD_up,
+	PD_down,
+	PD_left,
+	PD_right,
+	PD_all
 }ProjectileDir;
 
 typedef enum
 {
-	PT_single,
-	PT_double,
-	PT_triple,
-	PT_quad
-}ProjectileType; //maybe we can make this a flag instead idk
+	PN_single,
+	PN_double,
+	PN_triple,
+	PN_all
+}ProjectileNum; //maybe we can make this a flag instead idk
 
 typedef struct
 {
 	ProjectileDir direction;
-	ProjectileType type;
+	ProjectileNum type;
 }ProjectileData;
 
 /**

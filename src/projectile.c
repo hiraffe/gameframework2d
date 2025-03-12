@@ -17,7 +17,7 @@ Entity* projectile_new(GFC_Vector2D start, ProjectileDir dir)
 		return NULL;
 	}
 	self->sprite = gf2d_sprite_load_all(
-		"images/space_bug_top.png",
+		"images/ed210_top.png",
 		128,
 		128,
 		16,
@@ -38,16 +38,39 @@ Entity* projectile_new(GFC_Vector2D start, ProjectileDir dir)
 	return self;
 }
 
-void spawn_projectile(GFC_Vector2D start, ProjectileDir dir) 
+void spawn_projectile(GFC_Vector2D start, ProjectileDir dir, ProjectileNum num) 
 {
 	//if double, double, if triple, triple
-	Entity* projectile = projectile_new(start, dir);
-	if (!projectile) return;
+	if (num == PN_double)
+	{
+		Entity* projectile1 = projectile_new(gfc_vector2d(start.x+10,start.y), dir);
+		Entity* projectile2 = projectile_new(gfc_vector2d(start.x-10, start.y), dir);
+		if (!projectile1 || !projectile2) return;
+	}
+	else if (num == PN_triple)
+	{
+		Entity* projectile1 = projectile_new(gfc_vector2d(start.x, start.y), dir);
+		Entity* projectile2 = projectile_new(gfc_vector2d(start.x - 30, start.y), dir);
+		Entity* projectile3 = projectile_new(gfc_vector2d(start.x + 30, start.y), dir);
+		if (!projectile1 || !projectile2 || !projectile3) return;
+	}
+	else if (num == PN_all)
+	{
+		Entity* projectile1 = projectile_new(gfc_vector2d(start.x, start.y), PD_up);
+		Entity* projectile2 = projectile_new(gfc_vector2d(start.x, start.y), PD_down);
+		Entity* projectile3 = projectile_new(gfc_vector2d(start.x, start.y), PD_left);
+		Entity* projectile4 = projectile_new(gfc_vector2d(start.x, start.y), PD_right);
+		if (!projectile1 || !projectile2 || !projectile3 || !projectile4) return;
+	}
+	else
+	{
+		Entity* projectile = projectile_new(start, dir);
+		if (!projectile) return;
+	}
 }
 
 //void projectile_hit(Entity *self)
 //free if it hits something
-
 
 void projectile_think(Entity* self)
 {
@@ -56,16 +79,16 @@ void projectile_think(Entity* self)
 	ProjectileData* data = (ProjectileData*)self->data;
 	switch (data->direction)
 	{
-		case PT_up:
+		case PD_up:
 			self->velocity.y = -5.0;
 			break;
-		case PT_down:
+		case PD_down:
 			self->velocity.y = 5.0;
 			break;
-		case PT_left:
+		case PD_left:
 			self->velocity.x = -5.0;
 			break;
-		case PT_right:
+		case PD_right:
 			self->velocity.x = 5.0;
 			break;
 		default:
@@ -87,6 +110,33 @@ void projectile_update(Entity* self)
 	if (self->frame >= 16) self->frame = 0;
 
 	gfc_vector2d_add(self->position, self->position, self->velocity);
+
+	Bounds projectile_box = {
+		self->position.x,
+		self->position.y,
+		self->sprite->frame_w,
+		self->sprite->frame_h
+	};
+	/*
+	for (int i = 0; i < entity_system.entity_count; i++) {
+		Entity* other = &entity_manager.entity_list[i];
+		if (other == self || !other->_inuse) continue;
+
+		// Define other entity's bounding box
+		Bounds other_box = {
+			other->position.x,
+			other->position.y,
+			other->sprite->frame_w,
+			other->sprite->frame_h
+		};
+
+		// Check for collision
+		if (bounding_box_collision(projectile_box, other_box)) {
+			// Handle collision (e.g., destroy projectile, damage enemy)
+			handle_collision(self, other);
+			return; // Exit after handling collision
+		}
+	}*/
 }
 
 void projectile_free(Entity* self)

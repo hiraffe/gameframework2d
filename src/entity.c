@@ -10,6 +10,11 @@ typedef struct
 
 static EntitySystem entity_system = {0}; /**<intitalize a LOCAL global entity manager*/
 
+EntitySystem entity_get_system()
+{
+	return entity_system;
+}
+
 void entity_system_close();
 
 void entity_system_init(Uint32 maxEnts)
@@ -152,6 +157,14 @@ void entity_system_draw()
 		if (!entity_system.entity_list[i]._inuse) continue;
 		entity_draw(&entity_system.entity_list[i]);
 	}
+}
+
+void entity_collision(Bounds a, Bounds b)
+{
+	return !(a.x + a.w < b.x ||
+		a.x > b.x + b.w ||
+		a.y + a.h < b.y ||
+		a.y > b.y + b.h);
 }
 
 /*
