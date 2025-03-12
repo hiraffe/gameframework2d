@@ -43,15 +43,15 @@ void spawn_projectile(GFC_Vector2D start, ProjectileDir dir, ProjectileNum num)
 	//if double, double, if triple, triple
 	if (num == PN_double)
 	{
-		Entity* projectile1 = projectile_new(gfc_vector2d(start.x+10,start.y), dir);
-		Entity* projectile2 = projectile_new(gfc_vector2d(start.x-10, start.y), dir);
+		Entity* projectile1 = projectile_new(gfc_vector2d(start.x+30,start.y), dir);
+		Entity* projectile2 = projectile_new(gfc_vector2d(start.x-30, start.y), dir);
 		if (!projectile1 || !projectile2) return;
 	}
 	else if (num == PN_triple)
 	{
 		Entity* projectile1 = projectile_new(gfc_vector2d(start.x, start.y), dir);
-		Entity* projectile2 = projectile_new(gfc_vector2d(start.x - 30, start.y), dir);
-		Entity* projectile3 = projectile_new(gfc_vector2d(start.x + 30, start.y), dir);
+		Entity* projectile2 = projectile_new(gfc_vector2d(start.x-50, start.y), dir);
+		Entity* projectile3 = projectile_new(gfc_vector2d(start.x+50, start.y), dir);
 		if (!projectile1 || !projectile2 || !projectile3) return;
 	}
 	else if (num == PN_all)
@@ -111,32 +111,18 @@ void projectile_update(Entity* self)
 
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 
-	Bounds projectile_box = {
-		self->position.x,
-		self->position.y,
-		self->sprite->frame_w,
-		self->sprite->frame_h
-	};
-	/*
-	for (int i = 0; i < entity_system.entity_count; i++) {
-		Entity* other = &entity_manager.entity_list[i];
-		if (other == self || !other->_inuse) continue;
+	// Define screen boundaries
+	int screen_width = 1200;  // Replace with your actual screen width
+	int screen_height = 720;  // Replace with your actual screen height
 
-		// Define other entity's bounding box
-		Bounds other_box = {
-			other->position.x,
-			other->position.y,
-			other->sprite->frame_w,
-			other->sprite->frame_h
-		};
-
-		// Check for collision
-		if (bounding_box_collision(projectile_box, other_box)) {
-			// Handle collision (e.g., destroy projectile, damage enemy)
-			handle_collision(self, other);
-			return; // Exit after handling collision
-		}
-	}*/
+	// Check if projectile is out of screen bounds
+	if (self->position.x < 0 || self->position.x > screen_width ||
+		self->position.y < 0 || self->position.y > screen_height)
+	{
+		// Free the projectile entity
+		//entity_free(self);
+	}
+		
 }
 
 void projectile_free(Entity* self)

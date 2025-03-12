@@ -2,6 +2,7 @@
 #define __PLAYER_H__
 
 #include "entity.h"
+#include "projectile.h"
 
 typedef enum
 {
@@ -12,6 +13,17 @@ typedef enum
 	PU_reload,
 	PU_none
 }PowerUp;
+
+typedef struct
+{
+	int xp, neededxp;
+	int inventory[10];
+	int lastAttack;
+	int cooldown;
+	int speed;
+	PowerUp power;
+	int powerExpiry;
+}PlayerEntityData;
 
 /**
  * @brief spawn a new player entity
@@ -28,6 +40,6 @@ Entity* player_get_the();
 /**
  * @brief spawn projectile and have cooldown between shooting each one
  */
-void player_attack(Entity* self);
+void player_attack(Entity* self, ProjectileDir dir);
 
 #endif

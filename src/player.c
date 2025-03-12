@@ -1,7 +1,6 @@
 #include "simple_logger.h"
 #include "gfc_input.h"
 
-#include "projectile.h"
 #include "player.h"
 
 static Entity* thePlayer = NULL;
@@ -14,15 +13,6 @@ Entity* player_get_the()
 {
 	return thePlayer;
 }
-
-typedef struct
-{
-	int xp, neededxp;
-	int inventory[10];
-	int lastAttack;
-	int cooldown;
-	PowerUp power;
-}PlayerEntityData;
 
 Entity* player_new()
 {
@@ -57,7 +47,8 @@ Entity* player_new()
 	{
 		data->neededxp = 1000;
 		data->cooldown = 400;
-		data->power = PU_reload;
+		data->power = PU_none;
+		data->speed = 5;
 		//data->lastAttack = 0;
 	}
 	self->data = data;
@@ -81,7 +72,6 @@ void player_attack(Entity* self, ProjectileDir dir)
 	{
 		return;
 	}
-
 	data->lastAttack = curr;
 
 	if (data->power == PU_double)
@@ -105,19 +95,35 @@ void player_attack(Entity* self, ProjectileDir dir)
 void player_think(Entity* self)
 {
 	if (!self) return;
+	PlayerEntityData* data = (PlayerEntityData*)self->data;
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
+	Uint32 curr = SDL_GetTicks();
+
+	if (data->power != PU_none && curr > data->powerExpiry)
+	{
+		data->power = PU_none;
+	}
+
+	if (data->power == PU_speedy)
+	{
+		data->speed = 7;
+	}
+	else
+	{
+		data->speed = 5;
+	}
 
 	if (keys[SDL_SCANCODE_W]) {
-		self->position.y -= 5;
+		self->position.y -= data->speed;
 	}
 	else if (keys[SDL_SCANCODE_A]) {
-		self->position.x -= 5;
+		self->position.x -= data->speed;
 	}
 	else if (keys[SDL_SCANCODE_S]) {
-		self->position.y += 5;
+		self->position.y += data->speed;
 	}
 	else if (keys[SDL_SCANCODE_D]) {
-		self->position.x += 5;
+		self->position.x += data->speed;
 	}
 	if (self->data)
 	{
@@ -166,10 +172,13 @@ void player_think(Entity* self)
 void player_update(Entity* self)
 {
 	if (!self) return;
+
 	self->frame += 0.1;
 	if (self->frame >= 16) self->frame = 0;
 
 	gfc_vector2d_add(self->position, self->position, self->velocity);
+
+
 }
 
 void player_free(Entity* self)

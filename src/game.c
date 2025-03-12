@@ -9,6 +9,7 @@
 #include "player.h"
 #include "monster.h"
 #include "world.h"
+#include "item.h"
 
 int main(int argc, char * argv[])
 {
@@ -23,7 +24,8 @@ int main(int argc, char * argv[])
     Sprite *mouse;
     GFC_Color mouseGFC_Color = gfc_color8(0,255,255,200);
     Entity* player;
-    Entity* monster1, *monster2, *monster3;
+    Entity* monster1, *monster2, *monster3, *monster4;
+    Entity* powerup1, *powerup2, *powerup3, *powerup4, *powerup5;
     GFC_InputController* controller;
     
     /*program initializtion*/
@@ -52,6 +54,12 @@ int main(int argc, char * argv[])
     monster1 = monster_new(MT_yellow); //add monster
     monster2 = monster_new(MT_blue);
     monster3 = monster_new(MT_orange);
+    monster4 = monster_new(MT_red);
+    powerup1 = item_new(PU_double);
+    powerup2 = item_new(PU_triple);
+    powerup3 = item_new(PU_quad);
+    powerup4 = item_new(PU_speedy);
+    powerup5 = item_new(PU_reload);
     /*main game loop*/
     while(!done)
     {
@@ -95,6 +103,12 @@ int main(int argc, char * argv[])
     entity_free(monster1);
     entity_free(monster2);
     entity_free(monster3);
+    entity_free(monster4);
+    entity_free(powerup1);
+    entity_free(powerup2);
+    entity_free(powerup3);
+    entity_free(powerup4);
+    entity_free(powerup5);
     world_free(world);
     slog("---==== END ====---");
     return 0;
