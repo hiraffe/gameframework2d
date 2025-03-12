@@ -34,19 +34,19 @@ Entity* item_new(PowerUp powerup)
 	switch (powerup) //just for displaying
 	{
 		case PU_double:
-			self->position = gfc_vector2d(50, 650);
+			self->position = gfc_vector2d(150, 650);
 			break;
 		case PU_triple:
-			self->position = gfc_vector2d(250, 650);
+			self->position = gfc_vector2d(350, 650);
 			break;
 		case PU_quad:
-			self->position = gfc_vector2d(450, 650);
+			self->position = gfc_vector2d(550, 650);
 			break;
 		case PU_speedy:
-			self->position = gfc_vector2d(650, 650);
+			self->position = gfc_vector2d(750, 650);
 			break;
 		case PU_reload:
-			self->position = gfc_vector2d(850, 650);
+			self->position = gfc_vector2d(950, 650);
 			break;
 		default:
 			self->position = gfc_vector2d(1050, 650);
@@ -102,7 +102,7 @@ void item_think(Entity* self)
 	// Check for collision
 	if (entity_collision(item_bounds, player_bounds)) {
 		give_powerup(self, player);
-		//item_free(self);
+		item_free(self);
 		return; // Exit after handling collision
 	}
 }
@@ -124,4 +124,5 @@ void item_free(Entity* self)
 	//other cleanup
 	free(data);
 	self->data = NULL;
+	entity_free(self);
 }

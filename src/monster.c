@@ -35,6 +35,7 @@ Entity* monster_new(MonsterType type)
 		0);
 	self->frame = 0;
 	self->position = gfc_vector2d(0, 0);
+	self->position = gfc_vector2d(0, 0);
 
 	self->think = monster_think;
 	self->update = monster_update;
@@ -53,10 +54,14 @@ Entity* monster_new(MonsterType type)
 			self->position = gfc_vector2d(600, 400);
 			break;
 		case MT_blue:
-			self->position = gfc_vector2d(0, (rand() % 700));
+			self->position = gfc_vector2d(0, (rand() % 650));
+			self->velocity = gfc_vector2d(-1, 0);
 			break;
 		case MT_orange:
-			self->position = gfc_vector2d(1000, (rand() % 700));
+			self->position = gfc_vector2d((rand() % 1000), 0);
+			break;
+		case MT_yellow:
+			self->position = gfc_vector2d(0, 100);
 			break;
 		default:
 			self->position = gfc_vector2d((rand() % 1000) + 1, 0);
@@ -77,18 +82,27 @@ void monster_think(Entity* self)
 
 	if (data->type == MT_yellow)
 	{		
-		//speeds downwards, then goes back up slowly
-		dir.y = 1;
+		//moves in a wave
+		// Sinusoidal vertical movement
+		float amplitude = 10.0f; // Amplitude of the wave
+		float frequency = 0.05f; // Frequency of the wave
+		dir.y = sin(self->position.x * frequency) * amplitude;
+		dir.x = 1; // Constant horizontal movement to the right
 	}
 	else if (data->type == MT_blue)
 	{
-		//bounces from the left to the right of the screen
-		dir.x = 1;
+		//bounces back and forth
+		// Check for collision with screen boundaries
+		if (self->position.x <= 0 || self->position.x >= 1200 - self->sprite->frame_w)
+		{
+			self->velocity.x = -self->velocity.x;
+		}
+		dir.x = self->velocity.x;
 	}
 	else if (data->type == MT_orange)
 	{
 		//goes straight in one direction
-		dir.x = -1;
+		dir.y = 1;
 	}
 	else if (data->type == MT_green)
 	{
@@ -106,7 +120,6 @@ void monster_think(Entity* self)
 		Sint32 px = 0, py = 0;
 		Entity* player = player_get_the();
 		if (!player) return;
-		//SDL_GetMouseState(&mx, &my);
 		px = player->position.x;
 		py = player->position.y;
 		if (self->position.x < px) dir.x = 1;

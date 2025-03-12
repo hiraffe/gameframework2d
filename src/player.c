@@ -67,6 +67,10 @@ void player_attack(Entity* self, ProjectileDir dir)
 	{
 		data->cooldown = 200;
 	}
+	else
+	{
+		data->cooldown = 400;
+	}
 
 	if (curr - data->lastAttack < data->cooldown)
 	{
