@@ -48,6 +48,8 @@ Entity* item_new(PowerUp powerup)
 		case PU_reload:
 			self->position = gfc_vector2d(850, 650);
 			break;
+		default:
+			self->position = gfc_vector2d(1050, 650);
 	}
 
 	self->think = item_think;
@@ -100,6 +102,7 @@ void item_think(Entity* self)
 	// Check for collision
 	if (entity_collision(item_bounds, player_bounds)) {
 		give_powerup(self, player);
+		//item_free(self);
 		return; // Exit after handling collision
 	}
 }

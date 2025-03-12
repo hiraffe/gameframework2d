@@ -84,7 +84,8 @@ void entity_free(Entity* self)
 {
 	if (!self) return;
 	//anything else we allocate for our entity would get cleaned up here
-	//if (self->free) self->free(self->data);
+	self->_inuse = NULL;
+	if (self->free) self->free(self);
 	if (self->data)
 	{
 		free(self->data);
@@ -95,8 +96,6 @@ void entity_free(Entity* self)
 		gf2d_sprite_free(self->sprite);
 		self->sprite = NULL;
 	}
-	free(self);
-	self = NULL;
 }
 
 void entity_think(Entity* self)

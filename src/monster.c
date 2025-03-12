@@ -7,6 +7,16 @@ void monster_think(Entity* self);
 void monster_update(Entity* self);
 void monster_free(Entity* self);
 
+void monster_tester()
+{
+	Entity* monster1, * monster2, * monster3, * monster4, * monster5;
+	monster1 = monster_new(MT_yellow); //add monsters
+	monster2 = monster_new(MT_blue);
+	monster3 = monster_new(MT_orange);
+	monster4 = monster_new(MT_red);
+	monster5 = monster_new(MT_green);
+}
+
 Entity* monster_new(MonsterType type)
 {
 	Entity* self;
@@ -36,6 +46,12 @@ Entity* monster_new(MonsterType type)
 		data->type = type;
 		switch (type)
 		{
+		case MT_red:
+			self->position = gfc_vector2d(600, 300);
+			break;
+		case MT_green:
+			self->position = gfc_vector2d(600, 400);
+			break;
 		case MT_blue:
 			self->position = gfc_vector2d(0, (rand() % 700));
 			break;
@@ -61,22 +77,32 @@ void monster_think(Entity* self)
 
 	if (data->type == MT_yellow)
 	{		
+		//speeds downwards, then goes back up slowly
 		dir.y = 1;
-		if (self->position.y > 720) //length of window
-		{
-			//monster_free(self);
-		}
 	}
 	else if (data->type == MT_blue)
 	{
+		//bounces from the left to the right of the screen
 		dir.x = 1;
 	}
 	else if (data->type == MT_orange)
 	{
+		//goes straight in one direction
 		dir.x = -1;
+	}
+	else if (data->type == MT_green)
+	{
+		//follows the mouse
+		Sint32 mx = 0, my = 0;
+		SDL_GetMouseState(&mx, &my);
+		if (self->position.x < mx) dir.x = 1;
+		if (self->position.y < my) dir.y = 1;
+		if (self->position.x > mx) dir.x = -1;
+		if (self->position.y > my) dir.y = -1;
 	}
 	else if (data->type == MT_red)
 	{
+		//follows the player
 		Sint32 px = 0, py = 0;
 		Entity* player = player_get_the();
 		if (!player) return;

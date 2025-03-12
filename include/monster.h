@@ -18,6 +18,11 @@ typedef struct
 }MonsterEntityData;
 
 /**
+ * @brief spawn a bunch of monsters
+ */
+void monster_tester();
+
+/**
  * @brief spawn a new player entity
  * @param position where to spawn it
  * @return NULL on error, or a pointer to the spawned player entity

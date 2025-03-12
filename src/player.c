@@ -106,11 +106,11 @@ void player_think(Entity* self)
 
 	if (data->power == PU_speedy)
 	{
-		data->speed = 7;
+		data->speed = 8;
 	}
 	else
 	{
-		data->speed = 5;
+		data->speed = 4;
 	}
 
 	if (keys[SDL_SCANCODE_W]) {

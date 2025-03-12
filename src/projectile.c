@@ -96,8 +96,8 @@ void projectile_think(Entity* self)
 	}
 
 	gfc_vector2d_add(self->position, self->position, self->velocity);
-	if (self->position.x < 0) self->position.x = 0;
-	if (self->position.y < 0) self->position.y = 0;
+	//if (self->position.x < 0) self->position.x = 0;
+	//if (self->position.y < 0) self->position.y = 0;
 
 	//if projectile hits a wall or enemy, it dies
 	//code to check what type of thing it hits?
@@ -112,21 +112,26 @@ void projectile_update(Entity* self)
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 
 	// Define screen boundaries
-	int screen_width = 1200;  // Replace with your actual screen width
-	int screen_height = 720;  // Replace with your actual screen height
+	int screen_width = 1200;
+	int screen_height = 720;
 
 	// Check if projectile is out of screen bounds
 	if (self->position.x < 0 || self->position.x > screen_width ||
 		self->position.y < 0 || self->position.y > screen_height)
 	{
 		// Free the projectile entity
-		//entity_free(self);
+		projectile_free(self);
 	}
 		
 }
 
 void projectile_free(Entity* self)
 {
-	if (!self) return;
+	ProjectileData* data;
+	data = self->data;
+	if (!self || !self->data) return;
+	//other cleanup
+	free(data);
+	self->data = NULL;
 	entity_free(self);
 }
