@@ -17,13 +17,13 @@ Entity* projectile_new(GFC_Vector2D start, ProjectileDir dir)
 		return NULL;
 	}
 	self->sprite = gf2d_sprite_load_all(
-		"images/ed210_top.png",
-		128,
-		128,
-		16,
+		"images/boolet.png",
+		36,
+		12,
+		1,
 		0);
 	self->frame = 0;
-	self->position = gfc_vector2d(start.x, start.y);
+	self->position = gfc_vector2d(start.x + 12, start.y + 12);
 
 	self->think = projectile_think;
 	self->update = projectile_update;
@@ -106,8 +106,10 @@ void projectile_think(Entity* self)
 void projectile_update(Entity* self)
 {
 	if (!self) return;
+	/*
 	self->frame += 0.1;
 	if (self->frame >= 16) self->frame = 0;
+	*/
 
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 

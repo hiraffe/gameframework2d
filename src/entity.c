@@ -169,9 +169,9 @@ void entity_system_draw()
 void entity_collision(Bounds a, Bounds b)
 {
 	return !(a.x + a.w < b.x ||
-		a.x > b.x + b.w ||
-		a.y + a.h < b.y ||
-		a.y > b.y + b.h);
+			 a.x > b.x + b.w ||
+			 a.y + a.h < b.y ||
+			 a.y > b.y + b.h);
 }
 
 /*

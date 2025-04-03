@@ -75,12 +75,16 @@ World* world_load(const char* filename)
 	const char* tileSet;
 	const char* background;
 	int frame_w, frame_h, fpl;
+	SJson* spawnList = sj_array_new();
+
 	if (!filename)
 	{
 		slog("no filename provided for world load");
 		return NULL;
 	}
+
 	json = sj_load(filename);
+	if (!json)
 	{
 		slog("failed to load world %s", filename);
 		return NULL;
@@ -95,7 +99,7 @@ World* world_load(const char* filename)
 	}
 
 	vertical = sj_object_get_value(wjson, "tileMap");
-	if (!wjson)
+	if (!vertical)
 	{
 		slog("%s missing 'tileMap' object", filename);
 		sj_free(json);
@@ -135,8 +139,10 @@ World* world_load(const char* filename)
 		frame_h,
 		fpl,
 		1);
-
 	world_tile_layer(world);
+
+	sj_object_get_value_as_int(wjson, "spawnList", &spawnList); // i dont think this is right 
+	
 
 	sj_free(json);
 	return world;

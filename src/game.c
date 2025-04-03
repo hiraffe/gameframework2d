@@ -4,6 +4,7 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 #include "gfc_input.h"
+#include "gfc_audio.h"
 
 #include "entity.h"
 #include "player.h"
@@ -27,6 +28,7 @@ int main(int argc, char * argv[])
     //Entity* monster;
     Entity* powerup1, * powerup2, * powerup3, * powerup4, * powerup5;
     GFC_InputController* controller;
+    //Mix_Chunk *blaster, Mix_Music
     
     /*program initializtion*/
     init_logger("gf2d.log",0);
@@ -39,6 +41,13 @@ int main(int argc, char * argv[])
         720,
         gfc_vector4d(0,0,0,255),
         0);
+    gfc_audio_init(
+        1000,
+        128,
+        4,
+        1,
+        1,
+        1);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
     entity_system_init(1024);
@@ -50,7 +59,7 @@ int main(int argc, char * argv[])
     slog("press [escape] to quit");
     player = player_new(); //add player
     //world = world_load("maps/testworld.map");
-    world = world_test_new();
+    world = world_load("maps/testworld.map");
     
     powerup1 = item_new(PU_double);
     powerup2 = item_new(PU_triple);
@@ -58,11 +67,16 @@ int main(int argc, char * argv[])
     powerup4 = item_new(PU_speedy);
     powerup5 = item_new(PU_reload);
 
-    monster_tester();
+    //monster_tester();
+
+    //slog();
+    //blaster = MIX_LoadWAV("the sound file"); MIX_LoadMUS
+    //MIX_PlayMusic
 
     /*main game loop*/
     while(!done)
     {
+        //gfc_input_update(); //hello
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/

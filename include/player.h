@@ -34,6 +34,7 @@ Entity* player_new();
 
 /**
  * @brief get the player to make sure theres no duplicate player
+ * @return the player
  */
 Entity* player_get_the();
 

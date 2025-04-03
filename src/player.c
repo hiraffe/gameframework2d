@@ -30,10 +30,10 @@ Entity* player_new()
 		return NULL;
 	}
 	self->sprite = gf2d_sprite_load_all(
-		"images/ed210.png",
-		128,
-		128,
-		16,
+		"images/player2.png",
+		44,
+		44,
+		3,
 		0);
 	self->frame = 0;
 	self->position = gfc_vector2d(500,450);
@@ -178,7 +178,7 @@ void player_update(Entity* self)
 	if (!self) return;
 
 	self->frame += 0.1;
-	if (self->frame >= 16) self->frame = 0;
+	if (self->frame >= 10) self->frame = 0;
 
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 
