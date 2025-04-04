@@ -1,6 +1,8 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
+#include <stdbool.h>
+
 //#include "simple.json.h"
 #include "gfc_text.h"
 #include "gfc_vector.h"
@@ -32,11 +34,6 @@ typedef enum
 	ECL_Item = 8,
 	ECL_ALL = 15
 }EntityCollisionLayers;
-
-typedef struct
-{
-	float x, y, w, h;
-}Bounds;
 
 typedef struct Entity_S
 {
@@ -98,5 +95,7 @@ void entity_system_update();
  * @brief draw all active entities
  */
 void entity_system_draw();
+
+bool entity_collision(GFC_Rect a, GFC_Rect b);
 
 #endif

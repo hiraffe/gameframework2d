@@ -67,7 +67,7 @@ int main(int argc, char * argv[])
     powerup4 = item_new(PU_speedy);
     powerup5 = item_new(PU_reload);
 
-    //monster_tester();
+    monster_tester();
 
     //slog();
     //blaster = MIX_LoadWAV("the sound file"); MIX_LoadMUS

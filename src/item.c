@@ -51,6 +51,7 @@ Entity* item_new(PowerUp powerup)
 		default:
 			self->position = gfc_vector2d(1050, 650);
 	}
+	self->bounds = (GFC_Rect){ self->position.x, self->position.y, self->sprite->frame_w, self->sprite->frame_h };
 
 	self->think = item_think;
 	self->update = item_update;
@@ -82,25 +83,9 @@ void item_think(Entity* self)
 {
 	if (!self) return;
 
-	//if player touches it, give them ability
 	Entity* player = player_get_the();
-
-	Bounds item_bounds = {
-		self->position.x,
-		self->position.y,
-		self->sprite->frame_w,
-		self->sprite->frame_h
-	};
-
-	Bounds player_bounds = {
-		player->position.x,
-		player->position.y,
-		player->sprite->frame_w,
-		player->sprite->frame_h
-	};
-
 	// Check for collision
-	if (entity_collision(item_bounds, player_bounds)) {
+	if (entity_collision(self->bounds, player->bounds)) {
 		give_powerup(self, player);
 		item_free(self);
 		return; // Exit after handling collision

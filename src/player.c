@@ -37,6 +37,7 @@ Entity* player_new()
 		0);
 	self->frame = 0;
 	self->position = gfc_vector2d(500,450);
+	self->bounds = (GFC_Rect){self->position.x+8,self->position.y+8,28,28};
 
 	self->think = player_think;
 	self->update = player_update;
@@ -182,7 +183,7 @@ void player_update(Entity* self)
 
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 
-
+	self->bounds = (GFC_Rect){ self->position.x + 8,self->position.y + 8,28,28 };
 }
 
 void player_free(Entity* self)

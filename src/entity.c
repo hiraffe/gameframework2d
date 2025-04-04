@@ -1,5 +1,7 @@
 #include "simple_logger.h"
 
+#include "gf2d_draw.h"
+
 #include "entity.h"
 
 typedef struct
@@ -147,13 +149,14 @@ void entity_draw(Entity* self)
 		NULL,
 		NULL,
 		(Uint32)self->frame);
-	/*
-	if (_DRAWBOUNDS)
-	{
-		gfc_rect_copy(sect, self->bounds);
+	
+	//if (_DRAWBOUNDS)
+	//{
+		GFC_Rect rect;
+		gfc_rect_copy(rect, self->bounds);
 		gfc_vector2d_add(rect, rect, self->position);
-	}
-	*/
+		gf2d_draw_rect(self->bounds, GFC_COLOR_BLUE);
+	//}
 }
 
 void entity_system_draw()
@@ -166,7 +169,7 @@ void entity_system_draw()
 	}
 }
 
-void entity_collision(Bounds a, Bounds b)
+bool entity_collision(GFC_Rect a, GFC_Rect b)
 {
 	return !(a.x + a.w < b.x ||
 			 a.x > b.x + b.w ||
