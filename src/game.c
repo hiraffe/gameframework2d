@@ -11,6 +11,7 @@
 #include "monster.h"
 #include "world.h"
 #include "item.h"
+//#include "particle.h"
 
 int main(int argc, char * argv[])
 {
@@ -25,7 +26,7 @@ int main(int argc, char * argv[])
     Sprite *mouse;
     GFC_Color mouseGFC_Color = gfc_color8(0,255,255,200);
     Entity* player;
-    //Entity* monster;
+    Entity* enemy;
     Entity* powerup1, * powerup2, * powerup3, * powerup4, * powerup5;
     GFC_InputController* controller;
     //Mix_Chunk *blaster, Mix_Music
@@ -52,13 +53,15 @@ int main(int argc, char * argv[])
     gf2d_sprite_init(1024);
     entity_system_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
+
+    //gfc_config_def_init();
+    //gfc_config_def_load("config/particles.conf");
     
     /*demo setup*/
-    sprite = gf2d_sprite_load_image("images/backgrounds/bg_test.png");
+    sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     slog("press [escape] to quit");
     player = player_new(); //add player
-    //world = world_load("maps/testworld.map");
     world = world_load("maps/testworld.map");
     
     powerup1 = item_new(PU_double);
@@ -66,8 +69,9 @@ int main(int argc, char * argv[])
     powerup3 = item_new(PU_quad);
     powerup4 = item_new(PU_speedy);
     powerup5 = item_new(PU_reload);
+    enemy = enemy_new();
 
-    monster_tester();
+    //monster_tester();
 
     //slog();
     //blaster = MIX_LoadWAV("the sound file"); MIX_LoadMUS
@@ -80,7 +84,11 @@ int main(int argc, char * argv[])
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
-        SDL_GetMouseState(&mx,&my);
+        SDL_GetMouseState(&mx, &my);
+        //if (SDL_GetMouseState(&mx, &my))
+        //{
+            //particles_from_file("config/spray_particle.particle")
+        //}
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
 
@@ -96,6 +104,7 @@ int main(int argc, char * argv[])
 
             //entities in the middle
             entity_system_draw();
+            //particle_system_draw();
             
             //UI elements last
             gf2d_sprite_draw(
@@ -114,6 +123,7 @@ int main(int argc, char * argv[])
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     entity_free(player);
+    entity_free(enemy);
     entity_free(powerup1);
     entity_free(powerup2);
     entity_free(powerup3);

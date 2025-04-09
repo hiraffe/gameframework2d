@@ -63,8 +63,8 @@ void spawn_projectile(GFC_Vector2D start, ProjectileDir dir, ProjectileNum num)
 	else if (num == PN_triple)
 	{
 		Entity* projectile1 = projectile_new(gfc_vector2d(start.x, start.y), dir);
-		Entity* projectile2 = projectile_new(gfc_vector2d(start.x-50, start.y), dir);
-		Entity* projectile3 = projectile_new(gfc_vector2d(start.x+50, start.y), dir);
+		Entity* projectile2 = projectile_new(gfc_vector2d(start.x-20, start.y), dir);
+		Entity* projectile3 = projectile_new(gfc_vector2d(start.x+20, start.y), dir);
 		if (!projectile1 || !projectile2 || !projectile3) return;
 	}
 	else if (num == PN_all)
@@ -137,7 +137,6 @@ void projectile_free(Entity* self)
 	ProjectileData* data;
 	data = self->data;
 	if (!self || !self->data) return;
-	//other cleanup
 	free(data);
 	self->data = NULL;
 	entity_free(self);

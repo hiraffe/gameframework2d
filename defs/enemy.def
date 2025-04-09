@@ -1,0 +1,22 @@
+{
+	"enemies":[
+		{
+			"name":"guy",
+			"displayName":"Thingy",
+			"image":"images\ed210.png",
+			"frame_w":128,
+			"frame_h":128,
+			"fpl":16,
+			"health":10
+		},
+		{
+			"name":"bug",
+			"displayName":"Bug",
+			"image":"images\space_bug.png",
+			"frame_w":128,
+			"frame_h":128,
+			"fpl":16,
+			"health":25
+		}
+	]
+}

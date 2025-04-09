@@ -96,6 +96,12 @@ void entity_system_update();
  */
 void entity_system_draw();
 
+/**
+ * @brief function to check if two entities are colliding
+ * @param a bounds of the first entity
+ * @param b bounds of the second entity
+ * @return TRUE if they are colliding, otherwise FALSE
+ */
 bool entity_collision(GFC_Rect a, GFC_Rect b);
 
 #endif

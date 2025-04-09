@@ -28,14 +28,15 @@ Entity* monster_new(MonsterType type)
 		return NULL;
 	}
 	self->sprite = gf2d_sprite_load_all(
-		"images/space_bug_top.png",
-		128,
-		128,
-		16,
+		"images/monster.png",
+		44,
+		44,
+		3,
 		0);
 	self->frame = 0;
 	self->position = gfc_vector2d(0, 0);
 	self->position = gfc_vector2d(0, 0);
+	self->bounds = (GFC_Rect){ self->position.x + 12,self->position.y + 12,20,20 };
 
 	self->think = monster_think;
 	self->update = monster_update;
@@ -101,7 +102,7 @@ void monster_think(Entity* self)
 	}
 	else if (data->type == MT_orange)
 	{
-		//goes straight in one direction
+		//goes straight down
 		dir.y = 1;
 	}
 	else if (data->type == MT_green)
@@ -135,20 +136,19 @@ void monster_update(Entity* self)
 {
 	if (!self) return;
 	self->frame += 0.1;
-	if (self->frame >= 16) self->frame = 0;
+	if (self->frame >= 8) self->frame = 0;
 
 	gfc_vector2d_add(self->position, self->position, self->velocity);
+
+	self->bounds = (GFC_Rect){ self->position.x + 12,self->position.y + 12,20,20 };
 }
 
 void monster_free(Entity* self)
 {
-	//if (!self) return;
-	//entity_free(self);
-
 	MonsterEntityData* data;
 	if (!self || !self->data) return;
 	data = self->data;
-	//other cleanup
 	free(data);
 	self->data = NULL;
+	entity_free(self);
 }

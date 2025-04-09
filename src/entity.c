@@ -65,7 +65,6 @@ void entity_system_free_all(Entity* ignore)
 	}
 }
 
-
 Entity* entity_new()
 {
 	int i;
@@ -155,7 +154,7 @@ void entity_draw(Entity* self)
 		GFC_Rect rect;
 		gfc_rect_copy(rect, self->bounds);
 		gfc_vector2d_add(rect, rect, self->position);
-		gf2d_draw_rect(self->bounds, GFC_COLOR_BLUE);
+		gf2d_draw_rect(self->bounds, GFC_COLOR_RED);
 	//}
 }
 

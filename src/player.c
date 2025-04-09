@@ -50,7 +50,6 @@ Entity* player_new()
 		data->cooldown = 400;
 		data->power = PU_none;
 		data->speed = 5;
-		//data->lastAttack = 0;
 	}
 	self->data = data;
 	thePlayer = self; //

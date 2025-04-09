@@ -67,6 +67,7 @@ World* world_load(const char* filename)
 	World* world;
 	SJson* json = NULL;
 	SJson* wjson = NULL;
+	SJson* spawnlist = NULL;
 	SJson* vertical, * horizontal;
 	SJson* item;
 	int tile;
@@ -75,7 +76,6 @@ World* world_load(const char* filename)
 	const char* tileSet;
 	const char* background;
 	int frame_w, frame_h, fpl;
-	SJson* spawnList = sj_array_new();
 
 	if (!filename)
 	{
@@ -141,9 +141,14 @@ World* world_load(const char* filename)
 		1);
 	world_tile_layer(world);
 
-	sj_object_get_value_as_int(wjson, "spawnList", &spawnList); // i dont think this is right 
+	spawnlist = sj_object_get_value(wjson, "spawnList");
+	if (!spawnlist)
+	{
+		slog("%s does not contain spawn list", filename);
+		sj_free(json);
+		return;
+	}
 	
-
 	sj_free(json);
 	return world;
 }
@@ -228,105 +233,4 @@ void world_draw(World* world)
 	gf2d_sprite_draw_image(world->tileLayer, gfc_vector2d(0,0));
 }
 
-/*
-World* world_new()
-{
-	World* world;
-	world = gfc_allocate_array(sizeof(World), 1);
-	if (!world)
-	{
-		slog("ERROR: failed to allocate world");
-		return NULL;
-	}
-	return world;
-}
-*/
-/*
-void world_load(const char *filename)
-{
-	SJson* row;
-	int rowCount, columnCount;
-	int i, j;
-	SJson* column;
-	const char* string = NULL;
-	SJson* json;
-	World* world;
-	if (!filename) return NULL;
-	json = sj_load(filename);
-	if (!json)
-	{
-		slog("failed to load world %s", filename);
-		return NULL;
-	}
-	world = world_new();
-	if (!world) return NULL;
-	row = sj_object_get_value(json, "tileMap");
-	rowCount = sj_array_get_count(row);
-	if (rowCount)
-	{
-		//row = sj_array_get_nth(row, j);
-		if (!row)
-		{
-			slog("world %s, tileMap missing rows", filename);
-			sj_free(json);
-			world_free(world);
-			return NULL;
-		}
-		columnCount = sj_array_get_count(row);
-		world->tileMap = gfc_allocate_array(sizeof(Uint8), rowCount * columnCount);
-		if (world->tileMap)
-		{
-			slog("failed to allocate tilemap for world %s", filename);
-			sj_free(json);
-			world_free(world);
-			return NULL;
-		}
-		for (j = 0; j < rowCount; j++)
-		{
-			row = sj_array_get_nth(row, j);
-			if (!row) continue;
-			columnCount = sj_array_get_count(row);
-			world->tileMapSize.x = columnCount;
-			world->tileMapSize.y = rowCount;
-			for (i = 0; i < columnCount; i++)
-			{
-				column = sj_array_get_nth(row, i);
-				if (!column) continue;
-				sj_get_uint8_value(column, world->tileMap[j * columnCount + i]);
-			}
-		}
-	}
-
-	string = sj_object_get_string(json, "name");
-	if (string) gfc_line_cpy(world->name, string);
-
-	string = sj_object_get_string(json, "background");
-	if (string)
-	{
-		world->background = gf2d_sprite_load_image(string);
-	}
-}
-
-void world_free(World* world)
-{
-	int i, c;
-	Entity* ent;
-	if (!world) return;
-	gf2d_sprite_free(world->background);
-	gf2d_sprite_free(world->tileSet);
-	if (world->tileMap) free(world->tileMap);
-	if (world->entityList)
-	{
-		c = gfc_list_count(world->entityList);
-		for (i = 0; i < c; i++)
-		{
-			ent = gfc_list_nth(world->entityList, i);
-			if (!ent) continue;
-			entity_free(ent);
-		}
-		gfc_list_delete(world->entityList);
-	}
-	free(world);
-}
-*/
 
