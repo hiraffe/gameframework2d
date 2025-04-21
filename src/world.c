@@ -4,6 +4,7 @@
 #include "gf2d_graphics.h"
 
 #include "world.h"
+#include "enemy.h"
 
 void world_tile_layer(World *world)
 {
@@ -59,6 +60,48 @@ void world_tile_layer(World *world)
 	{
 		slog("failed to convert world tile layer to texture");
 		return;
+	}
+}
+
+void world_enemies_spawn(World *world, SJson* spawnlist)
+{
+	int i, count=0;
+	SJson* item;
+	const char* name;
+	const char* enemytype;
+	Entity* entity;
+
+	if (!spawnlist) return;
+	count = sj_array_get_count(spawnlist);
+
+	for (i = 0; i < count; i++)
+	{
+		item = sj_array_get_nth(spawnlist, i);
+
+		name = sj_object_get_value_as_string(item, "name");
+		if (!name) {
+			slog("%s missing 'name' object", spawnlist);
+			return NULL;
+		}
+
+		enemytype = sj_object_get_value_as_string(item, "enemytype");
+		if (!enemytype) {
+			slog("%s missing 'enemytype' object", spawnlist);
+			return NULL;
+		}
+
+		slog("enemy type: %s", enemytype);
+		if (strcmp(enemytype, "guy") == 0)
+		{
+			slog("enemy spawned");
+			entity = enemy_new();
+		}
+		else
+		{
+			continue;
+		}
+
+		gfc_list_append(&world->entityList, entity);
 	}
 }
 
@@ -148,11 +191,14 @@ World* world_load(const char* filename)
 		sj_free(json);
 		return;
 	}
+
+	world->entityList = *gfc_list_new();
+	world_enemies_spawn(world, spawnlist);
 	
 	sj_free(json);
 	return world;
 }
-
+/*
 World* world_test_new()
 {
 	int i, width = 75, height = 45;
@@ -184,6 +230,7 @@ World* world_test_new()
 	world_tile_layer(world);
 	return world;
 }
+*/
 
 World *world_new(GFC_Vector2I mapSize)
 {
@@ -223,6 +270,8 @@ void world_free(World* world)
 	gf2d_sprite_free(world->tileSet);
 	gf2d_sprite_free(world->tileLayer);
 	if (world->tileMap) free(world->tileMap);
+	//spawnlist
+	//free every entity in the world
 	free(world);
 }
 

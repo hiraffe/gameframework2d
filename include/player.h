@@ -23,6 +23,7 @@ typedef struct
 	int speed;
 	PowerUp power;
 	int powerExpiry;
+	GFC_Rect nearmiss;
 }PlayerEntityData;
 
 /**

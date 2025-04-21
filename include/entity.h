@@ -7,7 +7,9 @@
 #include "gfc_text.h"
 #include "gfc_vector.h"
 #include "gfc_shape.h"
+
 #include "gf2d_sprite.h"
+
 
 typedef enum
 {

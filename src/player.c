@@ -1,6 +1,8 @@
 #include "simple_logger.h"
 #include "gfc_input.h"
 
+#include "gf2d_draw.h"
+
 #include "player.h"
 
 static Entity* thePlayer = NULL;
@@ -37,6 +39,7 @@ Entity* player_new()
 		0);
 	self->frame = 0;
 	self->position = gfc_vector2d(500,450);
+	self->team = ETT_player;
 	self->bounds = (GFC_Rect){self->position.x+8,self->position.y+8,28,28};
 
 	self->think = player_think;
@@ -50,6 +53,7 @@ Entity* player_new()
 		data->cooldown = 400;
 		data->power = PU_none;
 		data->speed = 5;
+		data->nearmiss = (GFC_Rect){ self->position.x, self->position.y, self->sprite->frame_w, self->sprite->frame_h };
 	}
 	self->data = data;
 	thePlayer = self; //
@@ -176,13 +180,15 @@ void player_think(Entity* self)
 void player_update(Entity* self)
 {
 	if (!self) return;
+	PlayerEntityData* data = (PlayerEntityData*)self->data;
 
 	self->frame += 0.1;
 	if (self->frame >= 10) self->frame = 0;
 
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 
-	self->bounds = (GFC_Rect){ self->position.x + 8,self->position.y + 8,28,28 };
+	self->bounds = (GFC_Rect){ self->position.x + 12,self->position.y + 12,20,20 };
+	data->nearmiss = (GFC_Rect){ self->position.x, self->position.y, self->sprite->frame_w, self->sprite->frame_h };
 }
 
 void player_free(Entity* self)

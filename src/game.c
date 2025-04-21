@@ -26,7 +26,7 @@ int main(int argc, char * argv[])
     Sprite *mouse;
     GFC_Color mouseGFC_Color = gfc_color8(0,255,255,200);
     Entity* player;
-    Entity* enemy;
+    //Entity* enemy;
     Entity* powerup1, * powerup2, * powerup3, * powerup4, * powerup5;
     GFC_InputController* controller;
     //Mix_Chunk *blaster, Mix_Music
@@ -69,7 +69,7 @@ int main(int argc, char * argv[])
     powerup3 = item_new(PU_quad);
     powerup4 = item_new(PU_speedy);
     powerup5 = item_new(PU_reload);
-    enemy = enemy_new();
+    //enemy = enemy_new();
 
     //monster_tester();
 
@@ -123,7 +123,7 @@ int main(int argc, char * argv[])
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     entity_free(player);
-    entity_free(enemy);
+    //entity_free(enemy);
     entity_free(powerup1);
     entity_free(powerup2);
     entity_free(powerup3);

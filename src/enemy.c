@@ -24,6 +24,7 @@ Entity* enemy_new()
 		0);
 	self->frame = 0;
 	self->position = gfc_vector2d(1300, 350);
+	self->team = ETT_monster;
 	self->bounds = (GFC_Rect){ self->position.x,self->position.y,self->sprite->frame_w, self->sprite->frame_h };
 
 	self->think = enemy_think;

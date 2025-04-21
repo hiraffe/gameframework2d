@@ -1,8 +1,11 @@
 #ifndef __WORLD_H__
 #define __WORLD_H__
 
+#include "simple_json.h"
+
 #include "gfc_text.h"
 #include "gfc_vector.h"
+#include "gfc_list.h"
 
 #include "gf2d_sprite.h"
 
@@ -15,7 +18,7 @@ typedef struct
 	Sprite*			tileLayer;		/*<pre rendered tile layer*/
 	GFC_Vector2I	tileMapSize;	/*<height (how many tiles high and width (how many tiles long) the map is*/
 	//GFC_Vector2I ^^
-	//GFC_List		entityList;
+	GFC_List		entityList;		/*<list of entities in the world*/
 }World;
 
 /*
@@ -24,6 +27,18 @@ typedef struct
  * @return NULL on error, or a usable world otherwise
  */
 World* world_load(const char *filename);
+
+/*
+ * @brief create world tile layer
+ * @param world the world to draw on
+ */
+void world_tile_layer(World *world);
+
+/*
+ * @brief spawn all entities in the world
+ * @param spawnlist list of all entities to spawn
+ */
+void world_entities_spawn(SJson *spawnlist);
 
 /**
  * @brief test function to see if world is working

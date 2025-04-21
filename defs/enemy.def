@@ -17,6 +17,15 @@
 			"frame_h":128,
 			"fpl":16,
 			"health":25
+		},
+		{
+			"name":"custom",
+			"displayName":"Custom",
+			"image":"images\space_bug.png",
+			"frame_w":128,
+			"frame_h":128,
+			"fpl":16,
+			"health":5
 		}
 	]
 }
