@@ -36,6 +36,7 @@ Entity* monster_new(MonsterType type)
 	self->frame = 0;
 	self->position = gfc_vector2d(0, 0);
 	self->position = gfc_vector2d(0, 0);
+	self->team = ETT_monster;
 	self->bounds = (GFC_Rect){ self->position.x + 12,self->position.y + 12,20,20 };
 
 	self->think = monster_think;

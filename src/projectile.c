@@ -34,6 +34,7 @@ Entity* projectile_new(GFC_Vector2D start, ProjectileDir dir)
 	}
 	self->frame = 0;
 	self->position = gfc_vector2d(start.x + 5, start.y + 5);
+	self->team = ETT_player;
 	self->bounds = (GFC_Rect){ self->position.x, self->position.y, self->sprite->frame_w, self->sprite->frame_h };
 
 	self->think = projectile_think;

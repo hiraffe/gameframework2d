@@ -42,6 +42,7 @@ typedef struct Entity_S
 	Uint8			_inuse;			/**<flag for keeping track of memroy usage*/
 	GFC_TextLine	name;			/**<name of entity for debugging*/
 	EntityTeamType  team;			/**<which team is this entity associated with*/
+	EntityCollisionType collision;	
 	Uint8			layer;
 	GFC_Rect		bounds;
 	Sprite*			sprite;			/**<graphical representation og the entity*/
