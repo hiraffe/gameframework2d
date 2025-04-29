@@ -3,14 +3,9 @@
 #include "gf2d_draw.h"
 
 #include "entity.h"
+#include "world.h"
 
-typedef struct
-{
-	Entity* entity_list;
-	Uint32 entity_max;
-}EntitySystem;
-
-static EntitySystem entity_system = {0}; /**<intitalize a LOCAL global entity manager*/
+static EntitySystem entity_system = { 0 }; /**<intitalize a LOCAL global entity manager*/
 
 EntitySystem entity_get_system()
 {
@@ -23,7 +18,7 @@ void entity_system_init(Uint32 maxEnts)
 {
 	if (entity_system.entity_list)
 	{
-		slog("cannot have two instances of an entity sysytem, one is already active");
+		slog("cannot have two instances of an entity system, one is already active");
 		return;
 	}
 	if (!maxEnts)
@@ -176,11 +171,22 @@ bool entity_collision(GFC_Rect a, GFC_Rect b)
 			 a.y > b.y + b.h);
 }
 
-/*
-void entity_move(Entity* self)
+
+void entity_move(Entity* self, GFC_Vector2D move)
 {
-	gfc_vector2d_add(self->position, self->position, self->velocity);
-	gfc_vector2d_add(self->velocity, self->velocity, self->acceleration);
-	//chekc for collision
+	//gfc_vector2d_add(self->position, self->position, self->velocity);
+	//gfc_vector2d_add(self->velocity, self->velocity, self->acceleration);
+	//checc for collision
+
+	GFC_Vector2D newPosition;
+	gfc_vector2d_add(newPosition, self->position, move);
+
+	if (!tile_is_solid(newPosition))
+	{
+		self->position = newPosition;
+	}
+	else
+	{
+		slog("Blocked by wall!");
+	}
 }
-*/

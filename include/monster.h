@@ -5,11 +5,11 @@
 
 typedef enum
 {
-	MT_red,		// follows you
-	MT_blue,	// you can't move if it touches you
-	MT_orange,	// you have to move if it touches you
-	MT_green,	// can't die
-	MT_yellow	// normal
+	MT_wave,	// moves in sine wave
+	MT_hbounce,	// bounce between walls horizontal
+	MT_down,	// moves straight down
+	MT_mfollow,	// follows the mouse
+	MT_pfollow	// follows the player
 }MonsterType;
 
 typedef struct
@@ -28,5 +28,7 @@ void monster_tester();
  * @return NULL on error, or a pointer to the spawned player entity
  */
 Entity* monster_new(MonsterType type);
+
+void monster_on_hit();
 
 #endif

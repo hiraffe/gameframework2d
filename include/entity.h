@@ -10,7 +10,6 @@
 
 #include "gf2d_sprite.h"
 
-
 typedef enum
 {
 	ETT_none,
@@ -55,10 +54,19 @@ typedef struct Entity_S
 	void			(*update)(struct Entity_S* self);	/**<function to call to execute those decisions*/
 	void			(*free)(struct Entity_S* self);	/**<clean up any custom allocated data*/
 	void			(*damage)(struct Entity_S* self, struct Entity_S *other, struct Entity_S *credit, float damage, Uint8 damageType);
+	void			(*onHit)(struct Entity* self, int damage);
 	void			(*collide)(struct Entity_S* self, struct Entity_S *other, EntityCollisionType type);
 	float			health;
 	void*			data;			/**<for ad hoc addition data for the entity*/
 }Entity;
+
+typedef struct
+{
+	Entity* entity_list;
+	Uint32 entity_max;
+}EntitySystem;
+
+EntitySystem entity_get_system();
 
 /**
  * @brief initialize the entity sub entity_system_init
@@ -106,5 +114,7 @@ void entity_system_draw();
  * @return TRUE if they are colliding, otherwise FALSE
  */
 bool entity_collision(GFC_Rect a, GFC_Rect b);
+
+void entity_move(Entity* self, GFC_Vector2D move);
 
 #endif

@@ -40,6 +40,7 @@ Entity* player_new()
 	self->frame = 0;
 	self->position = gfc_vector2d(500,450);
 	self->team = ETT_player;
+	self->health = 50;
 	self->bounds = (GFC_Rect){self->position.x+8,self->position.y+8,28,28};
 
 	self->think = player_think;
@@ -152,26 +153,6 @@ void player_think(Entity* self)
 		player_attack(self, PD_right);
 	}
 
-	/*if (gfc_input_command_down("d")) {
-		self->velocity.x = 1.0;
-		slog("right");
-	}
-	else if (gfc_input_command_down("a")) {
-		self->velocity.x = -1.0;
-	}
-	else {
-		self->velocity.x = 0;
-	}
-
-	if (gfc_input_command_down("s")) {
-		self->velocity.y = 1.0;
-	}
-	else if (gfc_input_command_down("w")) {
-		self->velocity.y = -1.0;
-	}
-	else {
-		self->velocity.y = 0;
-	}*/
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 	if (self->position.x < 0) self->position.x = 0;
 	if (self->position.y < 0) self->position.y = 0;

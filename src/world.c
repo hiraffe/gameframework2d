@@ -6,6 +6,13 @@
 #include "world.h"
 #include "enemy.h"
 
+static Entity* theWorld = NULL;
+
+Entity* world_get_the()
+{
+	return theWorld;
+}
+
 void world_tile_layer(World *world)
 {
 	int i, j;
@@ -91,10 +98,11 @@ void world_enemies_spawn(World *world, SJson* spawnlist)
 		}
 
 		slog("enemy type: %s", enemytype);
-		if (strcmp(enemytype, "guy") == 0)
+		if (strcmp(enemytype, "none") != 0)
 		{
+			
 			slog("enemy spawned");
-			entity = enemy_new();
+			entity = enemy_new(enemytype);
 		}
 		else
 		{
@@ -283,3 +291,25 @@ void world_draw(World* world)
 }
 
 
+int tile_is_solid(GFC_Vector2D position)
+{
+	World* world = world_get_the();
+	int tileX, tileY, tileIndex, tileValue;
+
+	if (!world) return 0;
+
+	tileX = (int)(position.x / world->tileSet->frame_w);
+	tileY = (int)(position.y / world->tileSet->frame_h);
+
+	// Bounds check
+	if (tileX < 0 || tileY < 0 || tileX >= world->tileMapSize.x || tileY >= world->tileMapSize.y)
+		return 1;  // Treat out-of-bounds as solid
+
+	tileIndex = tileX + (tileY * world->tileMapSize.x);
+	tileValue = world->tileMap[tileIndex];
+
+	if (tileValue == 1)  // wall tile ID
+		return 1;
+
+	return 0;
+}

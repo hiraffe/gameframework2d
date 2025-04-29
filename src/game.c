@@ -11,6 +11,7 @@
 #include "monster.h"
 #include "world.h"
 #include "item.h"
+#include "enemy.h"
 //#include "particle.h"
 
 int main(int argc, char * argv[])
@@ -52,6 +53,7 @@ int main(int argc, char * argv[])
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
     entity_system_init(1024);
+    enemies_init("defs/enemy.def");
     SDL_ShowCursor(SDL_DISABLE);
 
     //gfc_config_def_init();

@@ -90,6 +90,7 @@ void projectile_think(Entity* self)
 {
 	if (!self) return;
 	ProjectileData* data = (ProjectileData*)self->data;
+	EntitySystem entity_system = entity_get_system();
 
 	switch (data->direction)
 	{
@@ -108,8 +109,27 @@ void projectile_think(Entity* self)
 		default:
 			self->velocity.y = -5.0;
 	}
-
 	gfc_vector2d_add(self->position, self->position, self->velocity);
+
+	//check collision with an enemy;
+	for (int i = 0; i < entity_system.entity_max; i++)
+	{
+		Entity* other = &entity_system.entity_list[i];
+		if (!other->_inuse || other == self) continue;
+
+		if (other->team = ETT_monster)
+		{
+			if (entity_collision(self->bounds, other->bounds))
+			{
+				if (other->onHit)
+				{
+					other->onHit(other, 1);  // apply 10 damage
+				}
+				//self->_inuse = 0;  // destroy projectile
+				break;
+			}
+		}
+	}
 }
 
 void projectile_update(Entity* self)
