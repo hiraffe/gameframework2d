@@ -105,6 +105,8 @@ void player_think(Entity* self)
 {
 	if (!self) return;
 	PlayerEntityData* data = (PlayerEntityData*)self->data;
+	GFC_Vector2D move;
+
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	Uint32 curr = SDL_GetTicks();
 
@@ -122,23 +124,21 @@ void player_think(Entity* self)
 		data->speed = 4;
 	}
 
+	//move = self->position;
+	move = (GFC_Vector2D){ 0,0 };
 	if (keys[SDL_SCANCODE_W]) {
-		self->position.y -= data->speed;
+		move.y -= data->speed;
 	}
 	else if (keys[SDL_SCANCODE_A]) {
-		self->position.x -= data->speed;
+		move.x -= data->speed;
 	}
 	else if (keys[SDL_SCANCODE_S]) {
-		self->position.y += data->speed;
+		move.y += data->speed;
 	}
 	else if (keys[SDL_SCANCODE_D]) {
-		self->position.x += data->speed;
+		move.x += data->speed;
 	}
-	if (self->data)
-	{
-		self->data = (PlayerEntityData*)self->data;
-		//do stuff with data
-	}
+	entity_move(self, move);
 
 	if (keys[SDL_SCANCODE_UP]) {
 		player_attack(self, PD_up);
@@ -153,9 +153,9 @@ void player_think(Entity* self)
 		player_attack(self, PD_right);
 	}
 
-	gfc_vector2d_add(self->position, self->position, self->velocity);
-	if (self->position.x < 0) self->position.x = 0;
-	if (self->position.y < 0) self->position.y = 0;
+	//gfc_vector2d_add(self->position, self->position, self->velocity);
+	//if (self->position.x < 0) self->position.x = 0;
+	//if (self->position.y < 0) self->position.y = 0;
 }
 
 void player_update(Entity* self)

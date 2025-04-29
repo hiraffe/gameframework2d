@@ -204,6 +204,7 @@ World* world_load(const char* filename)
 	world_enemies_spawn(world, spawnlist);
 	
 	sj_free(json);
+	theWorld = world;
 	return world;
 }
 /*
@@ -296,20 +297,28 @@ int tile_is_solid(GFC_Vector2D position)
 	World* world = world_get_the();
 	int tileX, tileY, tileIndex, tileValue;
 
-	if (!world) return 0;
+	if (!world)
+	{
+		slog("could not find world?");
+		return 0;
+	}
 
 	tileX = (int)(position.x / world->tileSet->frame_w);
 	tileY = (int)(position.y / world->tileSet->frame_h);
 
 	// Bounds check
-	if (tileX < 0 || tileY < 0 || tileX >= world->tileMapSize.x || tileY >= world->tileMapSize.y)
+	if (tileX < 0 || tileY < 0 || tileX >= world->tileMapSize.x || tileY >= world->tileMapSize.y) {;
 		return 1;  // Treat out-of-bounds as solid
+	}
 
 	tileIndex = tileX + (tileY * world->tileMapSize.x);
 	tileValue = world->tileMap[tileIndex];
+	slog("tile value: %d", tileValue);
 
-	if (tileValue == 1)  // wall tile ID
+	if (tileValue == 1) // wall tile ID
+	{
 		return 1;
+	}
 
 	return 0;
 }
