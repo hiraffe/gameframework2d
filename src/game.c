@@ -54,6 +54,7 @@ int main(int argc, char * argv[])
     gf2d_sprite_init(1024);
     entity_system_init(1024);
     enemies_init("defs/enemy.def");
+    player_classes_init("defs/player.def");
     SDL_ShowCursor(SDL_DISABLE);
 
     //gfc_config_def_init();
@@ -63,7 +64,7 @@ int main(int argc, char * argv[])
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     slog("press [escape] to quit");
-    player = player_new(); //add player
+    player = player_new("magician"); //add player
     world = world_load("maps/testworld.map");
     
     powerup1 = item_new(PU_double);
@@ -131,6 +132,7 @@ int main(int argc, char * argv[])
     entity_free(powerup3);
     entity_free(powerup4);
     entity_free(powerup5);
+    enemies_close();
     world_free(world);
     slog("---==== END ====---");
     return 0;

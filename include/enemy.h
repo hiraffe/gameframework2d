@@ -15,6 +15,8 @@ typedef struct
 	int monster_max;
 }EnemyEntityData;
 
+void enemies_close();
+
 /**
  * @brief initialize and load enemy definitions
  * @param filename the json file containing the enemy data

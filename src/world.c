@@ -313,7 +313,7 @@ int tile_is_solid(GFC_Vector2D position)
 
 	tileIndex = tileX + (tileY * world->tileMapSize.x);
 	tileValue = world->tileMap[tileIndex];
-	slog("tile value: %d", tileValue);
+	//slog("tile value: %d", tileValue);
 
 	if (tileValue == 1) // wall tile ID
 	{

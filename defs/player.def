@@ -1,0 +1,37 @@
+{
+	"classes":[
+		{
+			"name":"fighter",
+			"image":"images/player2.png",
+			"frame_w":44,
+			"frame_h":44,
+			"fpl":3,
+			"special":"blast",
+			"health":100,
+			"speed":5,
+			"cooldown":400
+		},
+		{
+			"name":"defender",
+			"image":"images/player2.png",
+			"frame_w":44,
+			"frame_h":44,
+			"fpl":3,
+			"special":"shield",
+			"health":200,
+			"speed":3,
+			"cooldown":500
+		},
+		{
+			"name":"magician",
+			"image":"images/player2.png",
+			"frame_w":44,
+			"frame_h":44,
+			"fpl":3,
+			"special":"healing",
+			"health":75,
+			"speed":7,
+			"cooldown":300
+		}
+	]
+}

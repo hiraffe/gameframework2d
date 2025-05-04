@@ -69,7 +69,7 @@ SJson* enemies_get_def_by_name(const char* name)
 	for (int i = 0; i < c; i++)
 	{
 		enemy = sj_array_get_nth(_enemyDefs, i);
-		if (!enemy)continue;
+		if (!enemy) continue;
 		enemyName = sj_object_get_value_as_string(enemy, "name");
 		if (!enemyName) continue;
 		if (gfc_strlcmp(name, enemyName) == 0) {
@@ -147,7 +147,7 @@ Entity* enemy_new(const char* type)
 	self->position = gfc_vector2d(1300, y);
 	self->team = ETT_monster;
 	sj_object_get_value_as_int(def, "health", &health);
-	self->health = 100;
+	self->health = health;
 	self->bounds = (GFC_Rect){ self->position.x,self->position.y,self->sprite->frame_w, self->sprite->frame_h };
 
 	self->onHit = enemy_on_hit;

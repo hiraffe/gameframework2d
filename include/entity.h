@@ -57,6 +57,7 @@ typedef struct Entity_S
 	void			(*onHit)(struct Entity* self, int damage);
 	void			(*collide)(struct Entity_S* self, struct Entity_S *other, EntityCollisionType type);
 	float			health;
+	float			dmg;
 	void*			data;			/**<for ad hoc addition data for the entity*/
 }Entity;
 

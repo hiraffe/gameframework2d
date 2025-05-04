@@ -117,7 +117,7 @@ void projectile_think(Entity* self)
 		Entity* other = &entity_system.entity_list[i];
 		if (!other->_inuse || other == self) continue;
 
-		if (other->team = ETT_monster)
+		if (other->team == ETT_monster)
 		{
 			if (entity_collision(self->bounds, other->bounds))
 			{

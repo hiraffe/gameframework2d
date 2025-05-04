@@ -185,8 +185,4 @@ void entity_move(Entity* self, GFC_Vector2D move)
 	{
 		self->position = newPosition;
 	}
-	else
-	{
-		slog("Blocked by wall!");
-	}
 }

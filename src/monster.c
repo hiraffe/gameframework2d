@@ -28,6 +28,7 @@ Entity* monster_new(MonsterType type)
 	self->position = gfc_vector2d(0, 0);
 	self->team = ETT_monster;
 	self->health = 1;
+	self->dmg = 1;
 	self->bounds = (GFC_Rect){ self->position.x + 12,self->position.y + 12,20,20 };
 
 	self->onHit = monster_on_hit;

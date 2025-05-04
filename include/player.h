@@ -21,10 +21,16 @@ typedef struct
 	int lastAttack;
 	int cooldown;
 	int speed;
+	const char* special;
 	PowerUp power;
 	int powerExpiry;
 	GFC_Rect nearmiss;
+	int tp;
 }PlayerEntityData;
+
+void player_classes_close();
+void player_classes_init(const char* filename);
+SJson* player_classes_get_def_by_name(const char* name);
 
 /**
  * @brief get the player to make sure theres no duplicate player
@@ -37,7 +43,7 @@ Entity* player_get_the();
  * @param position where to spawn it
  * @return NULL on error, or a pointer to the spawned player entity
  */
-Entity* player_new();
+Entity* player_new(const char *type);
 
 /**
  * @brief spawn projectile and have cooldown between shooting each one
