@@ -15,6 +15,11 @@ typedef struct
 	int monster_max;
 }EnemyEntityData;
 
+void monster_tester();
+
+/**
+ * @brief free enemy definitions
+ */
 void enemies_close();
 
 /**
@@ -30,15 +35,12 @@ void enemies_init(const char *filename);
  */
 SJson* enemies_get_def_by_name(const char *name);
 
- /**
-  * @brief spawn a new player entity
-  * @param position where to spawn it
-  * @return NULL on error, or a pointer to the spawned player entity
-  */
-Entity* enemy_new_tester();
-
+/**
+ * @brief spawn a new player entity
+ * @param type what kind of enemy to spawn
+ * @return NULL on error, or a pointer to the spawned player entity
+ */
 Entity* enemy_new(const char* type);
 
-void enemy_on_hit(Entity* self, int dmg);
 
 #endif

@@ -109,13 +109,19 @@ void entity_system_update();
 void entity_system_draw();
 
 /**
- * @brief function to check if two entities are colliding
+ * @brief check if two entities are colliding
  * @param a bounds of the first entity
  * @param b bounds of the second entity
- * @return TRUE if they are colliding, otherwise FALSE
+ * @return TRUE if there is a collision, otherwise FALSE
  */
 bool entity_collision(GFC_Rect a, GFC_Rect b);
 
-void entity_move(Entity* self, GFC_Vector2D move);
+/**
+ * @brief move an entity unless it is being blocked by a solid tile
+ * @param self the entity to be moved
+ * @param move the position to be moved
+ * @return TRUE if entity can move, otherwise FALSE
+ */
+bool entity_move(Entity* self, GFC_Vector2D move);
 
 #endif

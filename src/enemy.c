@@ -6,6 +6,7 @@
 void enemy_think(Entity* self);
 void enemy_update(Entity* self);
 void enemy_free(Entity* self);
+void enemy_on_hit(Entity* self, int dmg);
 
 static SJson* _enemyJson = NULL;
 static SJson* _enemyDefs = NULL;
@@ -13,11 +14,11 @@ static SJson* _enemyDefs = NULL;
 void monster_tester()
 {
 	Entity* monster1, * monster2, * monster3, * monster4, * monster5;
-	monster1 = monster_new(MT_wave); //add monsters
+	//monster1 = monster_new(MT_wave); //add monsters
 	monster2 = monster_new(MT_hbounce);
-	monster3 = monster_new(MT_down);
-	monster4 = monster_new(MT_pfollow);
-	monster5 = monster_new(MT_mfollow);
+	//monster3 = monster_new(MT_down);
+	//monster4 = monster_new(MT_pfollow);
+	//monster5 = monster_new(MT_mfollow);
 }
 
 void enemies_close()
@@ -81,7 +82,8 @@ SJson* enemies_get_def_by_name(const char* name)
 	return NULL;
 }
 
-Entity* enemy_new_tester()
+/*
+Entity* enemy_new_test()
 {
 	Entity* self;
 	EnemyEntityData* data;
@@ -116,6 +118,7 @@ Entity* enemy_new_tester()
 	self->data = data;
 	return self;
 }
+*/
 
 Entity* enemy_new(const char* type)
 {

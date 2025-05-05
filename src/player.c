@@ -11,6 +11,7 @@ static Entity* thePlayer = NULL;
 void player_think(Entity* self);
 void player_update(Entity* self);
 void player_free(Entity* self);
+void player_on_hit(Entity* self, int dmg);
 
 static SJson* _classJson = NULL;
 static SJson* _classDefs = NULL;
@@ -120,6 +121,7 @@ Entity* player_new(const char* type)
 	self->health = health;
 	self->bounds = (GFC_Rect){self->position.x+8,self->position.y+8,28,28};
 
+	self->onHit = player_on_hit;
 	self->think = player_think;
 	self->update = player_update;
 	self->free = player_free;
@@ -226,6 +228,15 @@ void player_attack(Entity* self, ProjectileDir dir)
 	}
 }
 
+void player_on_hit(Entity* self, int dmg)
+{
+	self->health -= dmg;
+	slog("health: %f", self->health);
+	if (self->health <= 0) {
+		slog("You Died!");
+	}
+}
+
 void player_think(Entity* self)
 {
 	if (!self) return;
@@ -297,8 +308,10 @@ void player_think(Entity* self)
 				{
 					other->onHit(other, 1);  // apply 10 damage
 				}
-				self->health -= other->dmg;
-				slog("health: %f", self->health);
+				if (self->onHit)
+				{
+					self->onHit(self, other->dmg);
+				}
 				break;
 			} 
 			else if (entity_collision(data->nearmiss, other->bounds))

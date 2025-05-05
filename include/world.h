@@ -21,29 +21,35 @@ typedef struct
 	GFC_List		entityList;		/*<list of entities in the world*/
 }World;
 
-/*
+/**
+ * @brief get the world
+ * @return the world
+ */
+//Entity* world_get_the();
+
+/**
  * @brief load a world from a config file
  * @param filename the name of the world file to load
  * @return NULL on error, or a usable world otherwise
  */
 World* world_load(const char *filename);
 
-/*
+/**
  * @brief create world tile layer
  * @param world the world to draw on
  */
 void world_tile_layer(World *world);
 
-/*
+/**
  * @brief spawn all entities in the world
  * @param spawnlist list of all entities to spawn
  */
-void world_entities_spawn(SJson *spawnlist);
+void world_entities_spawn(World* world, SJson *spawnlist);
 
 /**
  * @brief test function to see if world is working
  */
-World* world_test_new();
+//World* world_test_new();
 
 /**
  * @brief allocate a new empty world
@@ -63,5 +69,12 @@ World *world_new(GFC_Vector2I mapSize);
   * @param world the world to draw
   */
  void world_draw(World* world);
+
+ /** 
+  * @brief check if world tile is solid or not
+  * @param position where the tile is
+  * @return 1 if tile is solid or if position is out of bounds, otherwise 0
+  */
+ int tile_is_solid(GFC_Vector2D position);
 
 #endif

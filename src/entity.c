@@ -151,6 +151,10 @@ void entity_draw(Entity* self)
 		gfc_vector2d_add(rect, rect, self->position);
 		gf2d_draw_rect(self->bounds, GFC_COLOR_RED);
 	//}
+
+		if (self->data) {
+			//draw nearmiss box
+		}
 }
 
 void entity_system_draw()
@@ -172,7 +176,7 @@ bool entity_collision(GFC_Rect a, GFC_Rect b)
 }
 
 
-void entity_move(Entity* self, GFC_Vector2D move)
+bool entity_move(Entity* self, GFC_Vector2D move)
 {
 	//gfc_vector2d_add(self->position, self->position, self->velocity);
 	//gfc_vector2d_add(self->velocity, self->velocity, self->acceleration);
@@ -184,5 +188,7 @@ void entity_move(Entity* self, GFC_Vector2D move)
 	if (!tile_is_solid(newPosition))
 	{
 		self->position = newPosition;
+		return true;
 	}
+	return false;
 }

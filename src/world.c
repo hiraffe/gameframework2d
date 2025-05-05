@@ -70,7 +70,7 @@ void world_tile_layer(World *world)
 	}
 }
 
-void world_enemies_spawn(World *world, SJson* spawnlist)
+void world_entities_spawn(World *world, SJson* spawnlist)
 {
 	int i, count=0;
 	SJson* item;
@@ -201,7 +201,7 @@ World* world_load(const char* filename)
 	}
 
 	world->entityList = *gfc_list_new();
-	world_enemies_spawn(world, spawnlist);
+	world_entities_spawn(world, spawnlist);
 	
 	sj_free(json);
 	theWorld = world;
@@ -307,7 +307,7 @@ int tile_is_solid(GFC_Vector2D position)
 	tileY = (int)(position.y / world->tileSet->frame_h);
 
 	// Bounds check
-	if (tileX < 0 || tileY < 0 || tileX >= world->tileMapSize.x || tileY >= world->tileMapSize.y) {;
+	if (tileX < 0 || tileY < 0 || tileX >= world->tileMapSize.x || tileY >= world->tileMapSize.y) {
 		return 1;  // Treat out-of-bounds as solid
 	}
 

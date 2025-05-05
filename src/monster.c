@@ -6,6 +6,7 @@
 void monster_think(Entity* self);
 void monster_update(Entity* self);
 void monster_free(Entity* self);
+void monster_on_hit(Entity* self, int dmg);
 
 Entity* monster_new(MonsterType type)
 {
@@ -24,8 +25,7 @@ Entity* monster_new(MonsterType type)
 		3,
 		0);
 	self->frame = 0;
-	self->position = gfc_vector2d(0, 0);
-	self->position = gfc_vector2d(0, 0);
+	//self->position = gfc_vector2d(0, 0);
 	self->team = ETT_monster;
 	self->health = 1;
 	self->dmg = 1;
@@ -49,11 +49,11 @@ Entity* monster_new(MonsterType type)
 			self->position = gfc_vector2d(600, 400);
 			break;
 		case MT_hbounce:
-			self->position = gfc_vector2d(50, (rand() % 600));
+			self->position = gfc_vector2d(100, (rand() % (600 - 50))+50);
 			self->velocity = gfc_vector2d(-1, 0);
 			break;
 		case MT_down:
-			self->position = gfc_vector2d((rand() % 1000), 0);
+			self->position = gfc_vector2d((rand() % 1000), 50);
 			break;
 		case MT_wave:
 			self->position = gfc_vector2d(0, 100);
@@ -81,12 +81,14 @@ void monster_think(Entity* self)
 	MonsterEntityData* data = (MonsterEntityData*)self->data;
 	
 	GFC_Vector2D dir = { 0 };
+	GFC_Vector2D move;
+	float speed = 2.0f;
 
 	if (data->type == MT_wave)
 	{		
 		//moves in a sin wave
-		float amplitude = 10.0f; // Amplitude of the wave
-		float frequency = 0.05f; // Frequency of the wave
+		float amplitude = 10.0f; 
+		float frequency = 0.05f; 
 		dir.y = sin(self->position.x * frequency) * amplitude;
 		dir.x = 3; // Constant horizontal movement to the right
 	}
@@ -94,7 +96,7 @@ void monster_think(Entity* self)
 	{
 		//bounces back and forth
 		// Check for collision with screen boundaries
-		if (self->position.x <= 25 || self->position.x >= 875 - self->sprite->frame_w)
+		if (self->position.x <= 32 || self->position.x >= 860 - self->sprite->frame_w)
 		{
 			self->velocity.x = -self->velocity.x;
 		}
@@ -129,8 +131,21 @@ void monster_think(Entity* self)
 		if (self->position.y > py) dir.y = -1;
 	}
 	gfc_vector2d_normalize(&dir);
-	gfc_vector2d_scale(self->velocity, dir, 3);
+	gfc_vector2d_scale(self->velocity, dir, speed);
 
+	GFC_Vector2D newPos;
+	gfc_vector2d_copy(newPos, self->position);
+	gfc_vector2d_add(newPos, newPos, self->velocity);
+
+	if (!entity_move(self, self->velocity))
+	{
+		slog("cant move, position: %f, %f", self->position.x, self->position.y);
+		monster_free(self);
+	}
+	else
+	{
+		//slog("yes move, position: %f, %f", self->position.x, self->position.y);
+	}
 }
 
 void monster_update(Entity* self)
