@@ -26,9 +26,12 @@ int main(int argc, char * argv[])
     float mf = 0;
     Sprite *mouse;
     GFC_Color mouseGFC_Color = gfc_color8(0,255,255,200);
+    static Uint32 lastTime = 0;
+    static float deltaTime = 0;
     Entity* player;
     //Entity* enemy;
-    Entity* powerup1, * powerup2, * powerup3, * powerup4, * powerup5;
+    //Entity* powerup1, * powerup2, * powerup3, * powerup4, * powerup5;
+    ItemSpawner item_spawner;
     GFC_InputController* controller;
     //Mix_Chunk *blaster, Mix_Music
     
@@ -55,6 +58,7 @@ int main(int argc, char * argv[])
     entity_system_init(1024);
     enemies_init("defs/enemy.def");
     player_classes_init("defs/player.def");
+
     SDL_ShowCursor(SDL_DISABLE);
 
     //gfc_config_def_init();
@@ -67,12 +71,8 @@ int main(int argc, char * argv[])
     player = player_new("magician"); //add player
     world = world_load("maps/testworld.map");
     
-    powerup1 = item_new(PU_double);
-    powerup2 = item_new(PU_triple);
-    powerup3 = item_new(PU_quad);
-    powerup4 = item_new(PU_speedy);
-    powerup5 = item_new(PU_reload);
     //enemy = enemy_new();
+    item_spawner = item_get_spawner();
 
     //monster_tester();
 
@@ -95,9 +95,15 @@ int main(int argc, char * argv[])
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
 
+        // get delta time
+        Uint32 now = SDL_GetTicks(); 
+        deltaTime = (now - lastTime) / 1000.0f; 
+        lastTime = now; 
+
             entity_system_think();
             entity_system_update();
             //camera_bounds_check();
+            update_item_spawner(&item_spawner, world, deltaTime);
         
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
@@ -127,12 +133,8 @@ int main(int argc, char * argv[])
     }
     entity_free(player);
     //entity_free(enemy);
-    entity_free(powerup1);
-    entity_free(powerup2);
-    entity_free(powerup3);
-    entity_free(powerup4);
-    entity_free(powerup5);
     enemies_close();
+    player_classes_close();
     world_free(world);
     slog("---==== END ====---");
     return 0;
