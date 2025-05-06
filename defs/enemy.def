@@ -2,7 +2,7 @@
 	"enemies":[
 		{
 			"name":"girl",
-			"displayName":"Moth Girl",
+			"displayName": "Moth Girl",
 			"image":"images/moth_girl.png",
 			"frame_w":128,
 			"frame_h":384,

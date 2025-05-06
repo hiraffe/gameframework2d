@@ -15,7 +15,7 @@ void monster_tester()
 {
 	Entity* monster1, * monster2, * monster3, * monster4, * monster5;
 	//monster1 = monster_new(MT_wave); //add monsters
-	monster2 = monster_new(MT_hbounce);
+	//monster2 = monster_new(MT_hbounce);
 	//monster3 = monster_new(MT_down);
 	//monster4 = monster_new(MT_pfollow);
 	//monster5 = monster_new(MT_mfollow);
@@ -120,7 +120,7 @@ Entity* enemy_new_test()
 }
 */
 
-Entity* enemy_new(const char* type)
+Entity* enemy_new(const char* name)
 {
 	Entity* self;
 	EnemyEntityData* data;
@@ -135,7 +135,8 @@ Entity* enemy_new(const char* type)
 		return NULL;
 	}
 
-	def = enemies_get_def_by_name(type);
+	def = enemies_get_def_by_name(name);
+
 	sprite_img = sj_object_get_value_as_string(def, "image");
 	sj_object_get_value_as_int(def, "frame_w", &frame_w);
 	sj_object_get_value_as_int(def, "frame_h", &frame_h);

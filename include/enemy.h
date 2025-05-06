@@ -8,11 +8,19 @@
 #include "entity.h"
 #include "projectile.h"
 
+typedef enum
+{
+	ET_single,
+	ET_double,
+	ET_boss
+}EnemyType;
+
 typedef struct
 {
 	GFC_TextLine name;
 	int count;
 	int monster_max;
+	EnemyType type;
 }EnemyEntityData;
 
 void monster_tester();

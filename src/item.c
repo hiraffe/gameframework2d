@@ -1,17 +1,47 @@
 #include "simple_logger.h"
 
 #include "item.h"
-#include "player.h"
 
 void item_think(Entity* self);
 void item_update(Entity* self);
 void item_free(Entity* self);
 
-typedef struct
+ItemSpawner spawner = {
+	.timer = 0,
+	.interval = 2.0f,  // spawn every 2 seconds
+	.max_items = 5,
+	.items_spawned = 0,
+	//.spawnList = spawnlist  // optional: from world JSON
+};
+
+ItemSpawner item_get_spawner()
 {
-	PowerUp power;
-	int powertime;
-}ItemEntityData;
+	return spawner;
+}
+
+void update_item_spawner(ItemSpawner* spawner, World* world, float deltaTime)
+{
+	if (!spawner || !world) return;
+	spawner->timer += deltaTime;
+
+	if (spawner->items_spawned >= spawner->max_items) return;
+
+	if (spawner->timer >= spawner->interval)
+	{
+		spawner->timer = 0;
+
+		// spawn an enemy
+		Entity* item = item_new(PU_double);  // change type dynamically if needed
+		if (item)
+		{
+			ItemEntityData* data = (ItemEntityData*)item->data; 
+			//data->spawner = &spawner;
+			gfc_list_append(&world->entityList, item);
+			spawner->items_spawned++;
+			slog("Spawned item #%d", spawner->items_spawned);
+		}
+	}
+}
 
 Entity* item_new(PowerUp powerup)
 {
@@ -30,27 +60,7 @@ Entity* item_new(PowerUp powerup)
 		16,
 		0);
 	self->frame = 0;
-	//self->position = gfc_vector2d(0, 0);
-	switch (powerup) //just for displaying
-	{
-		case PU_double:
-			self->position = gfc_vector2d(150, 650);
-			break;
-		case PU_triple:
-			self->position = gfc_vector2d(350, 650);
-			break;
-		case PU_quad:
-			self->position = gfc_vector2d(550, 650);
-			break;
-		case PU_speedy:
-			self->position = gfc_vector2d(750, 650);
-			break;
-		case PU_reload:
-			self->position = gfc_vector2d(950, 650);
-			break;
-		default:
-			self->position = gfc_vector2d(1050, 650);
-	}
+	self->position = gfc_vector2d( (rand() % (800-50)) +50, (rand() % (600 - 50)) + 50);
 	self->bounds = (GFC_Rect){ self->position.x, self->position.y, self->sprite->frame_w, self->sprite->frame_h };
 
 	self->think = item_think;
@@ -82,8 +92,9 @@ void give_powerup(Entity* self, Entity* player)
 void item_think(Entity* self)
 {
 	if (!self) return;
-
 	Entity* player = player_get_the();
+	ItemSpawner spawner = item_get_spawner();
+
 	// Check for collision
 	if (entity_collision(self->bounds, player->bounds)) {
 		give_powerup(self, player);

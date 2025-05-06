@@ -6,9 +6,9 @@
 #include "world.h"
 #include "enemy.h"
 
-static Entity* theWorld = NULL;
+static World* theWorld = NULL;
 
-Entity* world_get_the()
+World* world_get_the()
 {
 	return theWorld;
 }
@@ -70,7 +70,7 @@ void world_tile_layer(World *world)
 	}
 }
 
-void world_entities_spawn(World *world, SJson* spawnlist)
+void world_load_spawnlist(World *world, SJson* spawnlist)
 {
 	int i, count=0;
 	SJson* item;
@@ -102,13 +102,13 @@ void world_entities_spawn(World *world, SJson* spawnlist)
 		{
 			
 			slog("enemy spawned");
-			entity = enemy_new(enemytype);
+			entity = enemy_new("girl");
 		}
 		else
 		{
 			continue;
 		}
-
+		
 		gfc_list_append(&world->entityList, entity);
 	}
 }
@@ -201,7 +201,7 @@ World* world_load(const char* filename)
 	}
 
 	world->entityList = *gfc_list_new();
-	world_entities_spawn(world, spawnlist);
+	world_load_spawnlist(world, spawnlist);
 	
 	sj_free(json);
 	theWorld = world;
@@ -322,3 +322,4 @@ int tile_is_solid(GFC_Vector2D position)
 
 	return 0;
 }
+

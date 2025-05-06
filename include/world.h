@@ -25,7 +25,7 @@ typedef struct
  * @brief get the world
  * @return the world
  */
-//Entity* world_get_the();
+World* world_get_the();
 
 /**
  * @brief load a world from a config file
@@ -44,7 +44,7 @@ void world_tile_layer(World *world);
  * @brief spawn all entities in the world
  * @param spawnlist list of all entities to spawn
  */
-void world_entities_spawn(World* world, SJson *spawnlist);
+void world_load_spawnlist(World* world, SJson *spawnlist);
 
 /**
  * @brief test function to see if world is working
