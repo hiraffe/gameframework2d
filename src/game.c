@@ -12,7 +12,10 @@
 #include "world.h"
 #include "item.h"
 #include "enemy.h"
+#include "menu.h"
 //#include "particle.h"
+
+GameState game_state = GS_MainMenu;
 
 int main(int argc, char * argv[])
 {
@@ -68,13 +71,10 @@ int main(int argc, char * argv[])
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     slog("press [escape] to quit");
-    player = player_new("magician"); //add player
+    player = player_new("fighter"); //add player
     world = world_load("maps/testworld.map");
-    
     //enemy = enemy_new();
     item_spawner = item_get_spawner();
-
-    //monster_tester();
 
     //slog();
     //blaster = MIX_LoadWAV("the sound file"); MIX_LoadMUS
@@ -83,48 +83,62 @@ int main(int argc, char * argv[])
     /*main game loop*/
     while(!done)
     {
-        //gfc_input_update(); //hello
+        /*update things here*/
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
-        /*update things here*/
         SDL_GetMouseState(&mx, &my);
+        mf += 0.1;
+        if (mf >= 16.0)mf = 0;
         //if (SDL_GetMouseState(&mx, &my))
         //{
             //particles_from_file("config/spray_particle.particle")
         //}
-        mf+=0.1;
-        if (mf >= 16.0)mf = 0;
-
+        
         // get delta time
         Uint32 now = SDL_GetTicks(); 
         deltaTime = (now - lastTime) / 1000.0f; 
         lastTime = now; 
 
-            entity_system_think();
-            entity_system_update();
-            //camera_bounds_check();
-            update_item_spawner(&item_spawner, world, deltaTime);
-        
-        gf2d_graphics_clear_screen();// clears drawing buffers
+        gf2d_graphics_clear_screen(); // clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
-            //backgrounds drawn first
-            gf2d_sprite_draw_image(sprite,gfc_vector2d(0,0));
-            world_draw(world);
 
-            //entities in the middle
-            entity_system_draw();
-            //particle_system_draw();
-            
-            //UI elements last
-            gf2d_sprite_draw(
-                mouse,
-                gfc_vector2d(mx,my),
-                NULL,
-                NULL,
-                NULL,
-                NULL,
-                &mouseGFC_Color,
-                (int)mf);
+        switch (game_state)
+        {
+            case GS_MainMenu:
+                main_menu_draw(mx, my, mf, mouse, mouseGFC_Color);
+                //int pressed = main_menu_update(keys, mx, my);
+                //slog("pressed: %d", pressed);
+                game_state = main_menu_update(keys, mx, my);
+                break;
+            case GS_PauseMenu: //change this later to make a pause menu remember!!
+                game_state = GS_MainMenu;
+                break;
+            case GS_MainLoop:
+                entity_system_think();
+                entity_system_update();
+                //camera_bounds_check();
+                update_item_spawner(&item_spawner, world, deltaTime);
+               
+                //backgrounds drawn first
+                gf2d_sprite_draw_image(sprite, gfc_vector2d(0, 0));
+                world_draw(world);
+
+                //entities in the middle
+                entity_system_draw();
+                //particle_system_draw();
+
+                //UI elements last
+                //i just took out the mouse
+
+                if (keys[SDL_SCANCODE_ESCAPE])
+                {
+                    game_state = GS_PauseMenu; 
+                }
+                break;
+            case GS_Quit:
+                done = 1;
+                break;
+        }
 
         gf2d_graphics_next_frame();// render current draw frame and skip to the next frame
         
@@ -132,7 +146,6 @@ int main(int argc, char * argv[])
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     entity_free(player);
-    //entity_free(enemy);
     enemies_close();
     player_classes_close();
     world_free(world);

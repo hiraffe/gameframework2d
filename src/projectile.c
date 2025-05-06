@@ -57,23 +57,23 @@ void spawn_projectile(GFC_Vector2D start, ProjectileDir dir, ProjectileNum num)
 	//if double, double, if triple, triple
 	if (num == PN_double)
 	{
-		Entity* projectile1 = projectile_new(gfc_vector2d(start.x+10,start.y), dir);
-		Entity* projectile2 = projectile_new(gfc_vector2d(start.x-10, start.y), dir);
+		Entity* projectile1 = projectile_new(gfc_vector2d(start.x, start.y+7), dir);
+		Entity* projectile2 = projectile_new(gfc_vector2d(start.x, start.y-7), dir);
 		if (!projectile1 || !projectile2) return;
 	}
 	else if (num == PN_triple)
 	{
-		Entity* projectile1 = projectile_new(gfc_vector2d(start.x, start.y), dir);
-		Entity* projectile2 = projectile_new(gfc_vector2d(start.x-20, start.y), dir);
-		Entity* projectile3 = projectile_new(gfc_vector2d(start.x+20, start.y), dir);
+		Entity* projectile1 = projectile_new(start, dir);
+		Entity* projectile2 = projectile_new(gfc_vector2d(start.x, start.y+12), dir);
+		Entity* projectile3 = projectile_new(gfc_vector2d(start.x, start.y-12), dir);
 		if (!projectile1 || !projectile2 || !projectile3) return;
 	}
 	else if (num == PN_all)
 	{
-		Entity* projectile1 = projectile_new(gfc_vector2d(start.x, start.y), PD_up);
-		Entity* projectile2 = projectile_new(gfc_vector2d(start.x, start.y), PD_down);
-		Entity* projectile3 = projectile_new(gfc_vector2d(start.x, start.y), PD_left);
-		Entity* projectile4 = projectile_new(gfc_vector2d(start.x, start.y), PD_right);
+		Entity* projectile1 = projectile_new(start, PD_up);
+		Entity* projectile2 = projectile_new(start, PD_down);
+		Entity* projectile3 = projectile_new(start, PD_left);
+		Entity* projectile4 = projectile_new(start, PD_right);
 		if (!projectile1 || !projectile2 || !projectile3 || !projectile4) return;
 	}
 	else

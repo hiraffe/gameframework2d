@@ -8,8 +8,8 @@ void item_free(Entity* self);
 
 ItemSpawner spawner = {
 	.timer = 0,
-	.interval = 2.0f,  // spawn every 2 seconds
-	.max_items = 5,
+	.interval = 10.0f,  // spawn every 2 seconds
+	.max_items = 10,
 	.items_spawned = 0,
 	//.spawnList = spawnlist  // optional: from world JSON
 };
@@ -30,11 +30,12 @@ void update_item_spawner(ItemSpawner* spawner, World* world, float deltaTime)
 	{
 		spawner->timer = 0;
 
-		// spawn an enemy
-		Entity* item = item_new(PU_double);  // change type dynamically if needed
+		// spawn an item
+		int randType = (rand() % 5); 
+		Entity* item = item_new(randType);
 		if (item)
 		{
-			ItemEntityData* data = (ItemEntityData*)item->data; 
+			//ItemEntityData* data = (ItemEntityData*)item->data; 
 			//data->spawner = &spawner;
 			gfc_list_append(&world->entityList, item);
 			spawner->items_spawned++;
