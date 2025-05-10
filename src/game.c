@@ -76,27 +76,6 @@ int main(int argc, char * argv[])
     //enemy = enemy_new();
     item_spawner = item_get_spawner();
     enemy_spawner = enemy_spawner_new(&world->enemylist);
-    //im printing the spawn list
-    slog("this is the list after calling enemy_spawner_new");
-    int c = gfc_list_get_count(&enemy_spawner->spawnlist);
-    slog("Spawn list has %d elements", c);
-
-    for (int j = 0; j < c; j++)
-    {
-        SpawnInfo* in = (SpawnInfo*)gfc_list_get_nth(&enemy_spawner->spawnlist, j);
-        if (!in)
-        {
-            slog("Item %d: NULL", j);
-            continue;
-        }
-
-        slog("Item %d: name = %s enemytype = %s",
-            j,
-            in->name,
-            in->enemytype
-        );
-    }
-    //end
 
     //slog();
     //blaster = MIX_LoadWAV("the sound file"); MIX_LoadMUS
@@ -175,6 +154,7 @@ int main(int argc, char * argv[])
     entity_free(player);
     enemies_close();
     player_classes_close();
+    enemy_spawner_free(enemy_spawner); 
     world_free(world);
     slog("---==== END ====---");
     return 0;

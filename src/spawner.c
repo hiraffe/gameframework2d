@@ -26,57 +26,31 @@ void enemy_spawner_update(Spawner* spawner, World* world)
 {
     if (!spawner || !world || !spawner->spawnlist) return;
     slog("total count: %d, current index: %d", spawner->totalCount, spawner->currentIndex);
-    //int alive = count_alive_enemies(spawner->spawnlist);
-    //if (alive >= spawner->maxSimultaneous) return;
+    int alive = count_alive_enemies(spawner->spawnlist);
+    if (alive >= spawner->maxSimultaneous) return;
 
-    //while (alive < spawner->maxSimultaneous && spawner->currentIndex < spawner->totalCount)
-
-    //im printing the spawn list
-    /*
-    slog("inside enemy spawner update");
-    int c = gfc_list_get_count(&world->enemylist);
-    slog("Spawn list has %d elements", c);
-
-    for (int j = 0; j < c; j++)
-    {
-        SpawnInfo* in = (SpawnInfo*)gfc_list_get_nth(&world->enemylist, j);
-        if (!in)
-        {
-            slog("Item %d: NULL", j);
-            continue;
-        }
-
-        slog("Item %d: name = %s enemytype = %s",
-            j,
-            in->name,
-            in->enemytype
-        );
-    }
-    */
-    //end
-    
-    while (spawner->currentIndex < spawner->totalCount)
+    while (alive < spawner->maxSimultaneous && spawner->currentIndex < spawner->totalCount)
+    //while (spawner->currentIndex < spawner->totalCount)
     {
         SpawnInfo* info = gfc_list_get_nth(spawner->spawnlist, spawner->currentIndex++);
         //spawner->currentIndex++;
 
         if (!info || !info->enemytype) continue;
-        slog("name: %s, type: %s", info->name, info->enemytype);
 
         Entity* entity = enemy_new(info->enemytype);
         if (!entity) continue;
 
         gfc_list_append(&world->entityList, entity);
-        //alive++;
+        alive++;
         //slog("Spawned enemy #%d at (%.1f, %.1f)", spawner->currentIndex - 1, info->position.x, info->position.y);
         //slog("Spawned enemy #%d", spawner->currentIndex - 1);
         slog("Spawned enemy: %s (%s)", info->name, info->enemytype);
+        slog("alive: %d", alive);
     }
 
     if (spawner->currentIndex >= spawner->totalCount)
     {
         spawner->finished = 1;
-        slog("Spawner finished");
     }
 }
 
@@ -99,6 +73,5 @@ void enemy_spawner_free(Spawner* spawner)
 {
     if (!spawner) return;
     // Don't free spawnlist itself if it’s shared externally.
-
-    free(spawner);
+    free(spawner); 
 }

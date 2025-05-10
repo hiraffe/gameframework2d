@@ -334,8 +334,10 @@ void world_free(World* world)
 	if (world->tileMap) free(world->tileMap);
 	//spawnlist
 	//free every entity in the world
-	//world_enemylist_clear(world->enemylist);
+	world_enemylist_clear(world->enemylist);
+	world->enemylist = NULL;
 	free(world);
+	slog("world freed");
 }
 
 void world_draw(World* world)
