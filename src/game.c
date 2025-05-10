@@ -13,6 +13,7 @@
 #include "item.h"
 #include "enemy.h"
 #include "menu.h"
+#include "spawner.h"
 //#include "particle.h"
 
 GameState game_state = GS_MainMenu;
@@ -32,9 +33,8 @@ int main(int argc, char * argv[])
     static Uint32 lastTime = 0;
     static float deltaTime = 0;
     Entity* player;
-    //Entity* enemy;
-    //Entity* powerup1, * powerup2, * powerup3, * powerup4, * powerup5;
     ItemSpawner item_spawner;
+    Spawner* enemy_spawner = {0};
     GFC_InputController* controller;
     //Mix_Chunk *blaster, Mix_Music
     
@@ -71,10 +71,32 @@ int main(int argc, char * argv[])
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
     slog("press [escape] to quit");
-    player = player_new("fighter"); //add player
+    player = player_new(); //add player
     world = world_load("maps/testworld.map");
     //enemy = enemy_new();
     item_spawner = item_get_spawner();
+    enemy_spawner = enemy_spawner_new(&world->enemylist);
+    //im printing the spawn list
+    slog("this is the list after calling enemy_spawner_new");
+    int c = gfc_list_get_count(&enemy_spawner->spawnlist);
+    slog("Spawn list has %d elements", c);
+
+    for (int j = 0; j < c; j++)
+    {
+        SpawnInfo* in = (SpawnInfo*)gfc_list_get_nth(&enemy_spawner->spawnlist, j);
+        if (!in)
+        {
+            slog("Item %d: NULL", j);
+            continue;
+        }
+
+        slog("Item %d: name = %s enemytype = %s",
+            j,
+            in->name,
+            in->enemytype
+        );
+    }
+    //end
 
     //slog();
     //blaster = MIX_LoadWAV("the sound file"); MIX_LoadMUS
@@ -106,18 +128,23 @@ int main(int argc, char * argv[])
         {
             case GS_MainMenu:
                 main_menu_draw(mx, my, mf, mouse, mouseGFC_Color);
-                //int pressed = main_menu_update(keys, mx, my);
                 //slog("pressed: %d", pressed);
                 game_state = main_menu_update(keys, mx, my);
                 break;
+            case GS_PlayerSelect:
+                player_select_draw(mx, my, mf, mouse, mouseGFC_Color); 
+                game_state = player_select_update(keys, mx, my);
+                break;
             case GS_PauseMenu: //change this later to make a pause menu remember!!
-                game_state = GS_MainMenu;
+                pause_menu_draw(mx, my, mf, mouse, mouseGFC_Color);
+                game_state = pause_menu_update(keys, mx, my); 
                 break;
             case GS_MainLoop:
                 entity_system_think();
                 entity_system_update();
                 //camera_bounds_check();
-                update_item_spawner(&item_spawner, world, deltaTime);
+                item_spawner_update(&item_spawner, world, deltaTime);
+                enemy_spawner_update(enemy_spawner, world);
                
                 //backgrounds drawn first
                 gf2d_sprite_draw_image(sprite, gfc_vector2d(0, 0));
@@ -142,7 +169,7 @@ int main(int argc, char * argv[])
 
         gf2d_graphics_next_frame();// render current draw frame and skip to the next frame
         
-        if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
+        //if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     entity_free(player);

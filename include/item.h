@@ -31,7 +31,7 @@ Entity* item_new(PowerUp powerup);
 
 void give_powerup(Entity* self, Entity* player);
 
-void update_item_spawner(ItemSpawner* spawner, World* world, float deltaTime);
+void item_spawner_update(ItemSpawner* spawner, World* world, float deltaTime);
 
 
 #endif

@@ -54,10 +54,15 @@ SJson* player_classes_get_def_by_name(const char* name);
 
 /**
  * @brief spawn a new player entity
- * @param type which class of player to spawn
  * @return NULL on error, or a pointer to the spawned player entity
  */
-Entity* player_new(const char *type);
+Entity* player_new();
+
+/**
+ * @brief change the class of the player entity to one of the classes defined using json
+ * @param type which class of player to spawn
+ */
+void player_change_class(const char* type);
 
 /**
  * @brief spawn projectile and have cooldown between shooting each one

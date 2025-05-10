@@ -47,7 +47,7 @@ void enemies_init(const char* filename)
 	_enemyDefs = sj_object_get_value(_enemyJson, "enemies");
 	if (!_enemyDefs)
 	{
-		slog("item definition file %s does not contain items list", filename);
+		slog("enemy definition file %s does not contain enemies list", filename);
 		sj_free(_enemyJson);
 		_enemyJson = NULL;
 		return;

@@ -60,19 +60,19 @@
 			},
 			{
 				"name":"enemy1",
-				"enemytype":"single"
+				"enemytype":"girl"
 			},
 			{
 				"name":"enemy2",
-				"enemytype":"double"
+				"enemytype":"guy"
 			},
 			{
 				"name":"enemy3",
-				"enemytype":"double"
+				"enemytype":"bug"
 			}
 			{
-				"name":"enemy3",
-				"enemytype":"boss"
+				"name":"enemy4",
+				"enemytype":"girl"
 			}
 		]
 	}

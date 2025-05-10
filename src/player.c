@@ -82,6 +82,52 @@ SJson* player_classes_get_def_by_name(const char* name)
 	return NULL;
 }
 
+Entity* player_new()
+{
+	Entity* self;
+	PlayerEntityData* data;
+	if (thePlayer)
+	{
+		//gfc_vector2d_copy(self->position, position);
+		return thePlayer;
+	}
+	self = entity_new();
+	if (!self)
+	{
+		slog("failed to spawn a new player entity");
+		return NULL;
+	}
+	self->sprite = gf2d_sprite_load_all(
+		"images/player2.png",
+		44,
+		44,
+		3,
+		0);
+	self->frame = 0;
+	self->position = gfc_vector2d(500, 450);
+	self->team = ETT_player;
+	self->health = 100;
+	self->bounds = (GFC_Rect){ self->position.x + 8,self->position.y + 8,28,28 };
+
+	self->think = player_think;
+	self->update = player_update;
+	self->free = player_free;
+
+	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
+	if (data)
+	{
+		data->neededxp = 1000;
+		data->cooldown = 400;
+		data->power = PU_none;
+		data->speed = 5;
+		data->nearmiss = (GFC_Rect){ self->position.x, self->position.y, self->sprite->frame_w, self->sprite->frame_h };
+		data->tp = 0;
+	}
+	self->data = data;
+	thePlayer = self; //
+	return self;
+}
+/*
 Entity* player_new(const char* type)
 {
 	Entity* self;
@@ -143,54 +189,46 @@ Entity* player_new(const char* type)
 	thePlayer = self; //
 	return self;
 }
-
-/*
-Entity* player_new()
-{
-	Entity* self;
-	PlayerEntityData* data;
-	if (thePlayer)
-	{
-		//gfc_vector2d_copy(self->position, position);
-		return thePlayer;
-	}
-	self = entity_new();
-	if (!self)
-	{
-		slog("failed to spawn a new player entity");
-		return NULL;
-	}
-	self->sprite = gf2d_sprite_load_all(
-		"images/player2.png",
-		44,
-		44,
-		3,
-		0);
-	self->frame = 0;
-	self->position = gfc_vector2d(500,450);
-	self->team = ETT_player;
-	self->health = 100;
-	self->bounds = (GFC_Rect){self->position.x+8,self->position.y+8,28,28};
-
-	self->think = player_think;
-	self->update = player_update;
-	self->free = player_free;
-
-	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
-	if (data)
-	{
-		data->neededxp = 1000;
-		data->cooldown = 400;
-		data->power = PU_none;
-		data->speed = 5;
-		data->nearmiss = (GFC_Rect){ self->position.x, self->position.y, self->sprite->frame_w, self->sprite->frame_h };
-		data->tp = 0;
-	}
-	self->data = data;
-	thePlayer = self; //
-	return self;
-}
 */
+void player_change_class(const char* type)
+{
+	Entity* self = player_get_the();
+	PlayerEntityData* data = (PlayerEntityData*)self->data;
+	if (!self || !self->data) return;
+	SJson* def;
+	const char* sprite_img;
+	int frame_w, frame_h, fpl, health, speed, cooldown;
+
+	def = player_classes_get_def_by_name(type);
+
+	sprite_img = sj_object_get_value_as_string(def, "image");
+	sj_object_get_value_as_int(def, "frame_w", &frame_w);
+	sj_object_get_value_as_int(def, "frame_h", &frame_h);
+	sj_object_get_value_as_int(def, "fpl", &fpl);
+	self->sprite = gf2d_sprite_load_all(
+		sprite_img,
+		frame_w,
+		frame_h,
+		fpl,
+		0);
+
+	sj_object_get_value_as_int(def, "health", &health);
+	self->health = health;
+
+	data->neededxp = 1000;
+
+	data->special = sj_object_get_value_as_string(def, "special");
+
+	sj_object_get_value_as_int(def, "cooldown", &cooldown);
+	data->cooldown = cooldown;
+
+	data->power = PU_none;
+
+	sj_object_get_value_as_int(def, "speed", &speed);
+	data->speed = speed;
+
+	slog("class changed to %s", type);
+}
 
 void player_attack(Entity* self, ProjectileDir dir)
 {

@@ -10,14 +10,20 @@
 typedef enum
 {
 	GS_MainMenu,
+	GS_PlayerSelect,
 	GS_MainLoop,
 	GS_PauseMenu,
+	GS_DeathMenu,
 	GS_EnemyEditor,
 	GS_Quit
 }GameState;
 
 int main_menu_update(const Uint8* keys, int mx, int my);
+int pause_menu_update(const Uint8* keys, int mx, int my);
+int player_select_update(const Uint8* keys, int mx, int my);
 
 void main_menu_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC_Color);
+void pause_menu_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC_Color);
+void player_select_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC_Color);
 
 #endif

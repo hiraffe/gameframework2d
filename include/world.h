@@ -4,10 +4,18 @@
 #include "simple_json.h"
 
 #include "gfc_text.h"
+#include "gfc_types.h"
 #include "gfc_vector.h"
 #include "gfc_list.h"
 
 #include "gf2d_sprite.h"
+
+typedef struct
+{
+	char* name;
+	char* enemytype;
+	//GFC_Vector2D position;
+}SpawnInfo;
 
 typedef struct
 {
@@ -19,6 +27,8 @@ typedef struct
 	GFC_Vector2I	tileMapSize;	/*<height (how many tiles high and width (how many tiles long) the map is*/
 	//GFC_Vector2I ^^
 	GFC_List		entityList;		/*<list of entities in the world*/
+	GFC_List		*enemylist;		/*<list of enemies in the world*/
+	//Spawner*			spawner;ehehehehheahfuahewfuiwaf
 }World;
 
 /**

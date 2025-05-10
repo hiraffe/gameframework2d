@@ -5,6 +5,7 @@
 
 #include "world.h"
 #include "enemy.h"
+#include "spawner.h"
 
 static World* theWorld = NULL;
 
@@ -70,6 +71,15 @@ void world_tile_layer(World *world)
 	}
 }
 
+char* s_strdup(const char* src)
+{
+	if (!src) return NULL;
+	size_t len = strlen(src) + 1;
+	char* copy = (char*)malloc(len);
+	if (copy) memcpy(copy, src, len);
+	return copy;
+}
+
 void world_load_spawnlist(World *world, SJson* spawnlist)
 {
 	int i, count=0;
@@ -97,20 +107,46 @@ void world_load_spawnlist(World *world, SJson* spawnlist)
 			return NULL;
 		}
 
-		slog("enemy type: %s", enemytype);
 		if (strcmp(enemytype, "none") != 0)
 		{
-			
-			slog("enemy spawned");
-			entity = enemy_new("girl");
+			SpawnInfo *enemy_info = gfc_allocate_array(sizeof(SpawnInfo), 1);
+			//enemy_info->name = name;
+			//enemy_info->enemytype = enemytype;
+			enemy_info->name = s_strdup(name); 
+			enemy_info->enemytype = s_strdup(enemytype); 
+			//strncpy(enemy_info->name, name, sizeof(enemy_info->name) - 1);
+			//strncpy(enemy_info->enemytype, ", sizeof(enemy_info->enemytype) - 1);
+			gfc_list_append(&world->enemylist, enemy_info);
+			slog("enemy added: %s, type: %s", enemy_info->name, enemy_info->enemytype);
 		}
 		else
 		{
 			continue;
 		}
 		
-		gfc_list_append(&world->entityList, entity);
+		//gfc_list_append(&world->entityList, entity);
 	}
+	//im printing the spawn list
+	
+	int c = gfc_list_get_count(&world->enemylist);
+	slog("Spawn list has %d elements", c);
+
+	for (int j = 0; j < c; j++)
+	{
+		SpawnInfo* in = (SpawnInfo*)gfc_list_get_nth(&world->enemylist, j);
+		if (!in)
+		{
+			slog("Item %d: NULL", j);
+			continue;
+		}
+
+		slog("Item %d: name = %s enemytype = %s",
+			j,
+			in->name,
+			in->enemytype
+		);
+	}
+	//end
 }
 
 World* world_load(const char* filename)
@@ -201,10 +237,12 @@ World* world_load(const char* filename)
 	}
 
 	world->entityList = *gfc_list_new();
+	world->enemylist = gfc_list_new();
 	world_load_spawnlist(world, spawnlist);
 	
 	sj_free(json);
 	theWorld = world;
+	slog("world loaded");
 	return world;
 }
 /*
@@ -271,6 +309,21 @@ World *world_new(GFC_Vector2I mapSize)
 	return world;
 }
 
+void world_enemylist_clear(GFC_List *list)
+{
+	int count = gfc_list_get_count(list);
+	for (int i = 0; i < count; i++)
+	{
+		SpawnInfo* info = gfc_list_get_nth(list, i);
+		if (!info) continue;
+
+		free(info->name);
+		free(info->enemytype);
+		free(info);
+	}
+	gfc_list_delete(list);
+}
+
 void world_free(World* world)
 {
 	if (!world) return;
@@ -281,6 +334,7 @@ void world_free(World* world)
 	if (world->tileMap) free(world->tileMap);
 	//spawnlist
 	//free every entity in the world
+	//world_enemylist_clear(world->enemylist);
 	free(world);
 }
 
@@ -322,4 +376,3 @@ int tile_is_solid(GFC_Vector2D position)
 
 	return 0;
 }
-

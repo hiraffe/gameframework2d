@@ -19,7 +19,7 @@ ItemSpawner item_get_spawner()
 	return spawner;
 }
 
-void update_item_spawner(ItemSpawner* spawner, World* world, float deltaTime)
+void item_spawner_update(ItemSpawner* spawner, World* world, float deltaTime)
 {
 	if (!spawner || !world) return;
 	spawner->timer += deltaTime;
