@@ -121,7 +121,7 @@ Entity* enemy_new_test()
 }
 */
 
-Entity* enemy_new(const char* name)
+Entity* enemy_new(const char* id, const char* name)
 {
 	Entity* self;
 	EnemyEntityData* data;
@@ -163,7 +163,15 @@ Entity* enemy_new(const char* name)
 	data = gfc_allocate_array(sizeof(EnemyEntityData), 1);
 	if (data)
 	{
+		data->name = name;
+		data->id = id;
+		data->monster_count = 0;
 		data->monster_max = 10;
+		if (strcmp(data->name, "bug") == 0)
+		{
+			data->monster_max = 15;
+		}
+		//data->spawned_monsters = gfc_list_new();
 	}
 	self->data = data;
 	return self;
@@ -171,13 +179,50 @@ Entity* enemy_new(const char* name)
 
 void enemy_on_hit(Entity* self, int dmg)
 {
+	if (!self) return;
+	EnemyEntityData* data = (EnemyEntityData*)self->data;
+
 	self->health -= dmg;
 	self->frame = 0;
 	if (self->health < 0) {
+		//tell the spawner there is one less enemy alive
 		Spawner* spawner = spawner_get_the();
 		spawner->alive--;
+
+		//kill all monsters that were spawned by this guy
+		EntitySystem entity_system = entity_get_system();
+		for (int i = 0; i < entity_system.entity_max; i++)
+		{
+			Entity* child = &entity_system.entity_list[i];
+			if (!child || child->team != ETT_monster) continue;
+			MonsterEntityData* child_data = (MonsterEntityData*)child->data;
+			if (!child_data) continue;
+			slog("child: %s, parent: %s", child_data->parent_id, data->id);
+			if (strcmp(child_data->parent_id, data->id) == 0)
+			{
+				monster_free(child);
+			}
+		}
 		enemy_free(self);
 		slog("enemy killed");
+	}
+}
+
+void enemy_spawn_monsters (Entity* self, const char* name)
+{
+	if (!self) return;
+	EnemyEntityData* data = (EnemyEntityData*)self->data;
+
+	if (strcmp(name, "bug") == 0)
+	{
+		Entity* monster = monster_new(MT_hbounce, data->id);
+		/*
+		if (monster && self)
+		{
+			EnemyEntityData* data = (EnemyEntityData*)self->data;
+			gfc_list_append(&data->spawned_monsters, monster);
+		}
+		*/
 	}
 }
 
@@ -188,7 +233,7 @@ void enemy_think(Entity* self)
 
 	while (data->monster_max > 0)
 	{
-		monster_tester();
+		enemy_spawn_monsters(self, data->name);
 		data->monster_max--;
 	}
 

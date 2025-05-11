@@ -10,7 +10,7 @@ Spawner* spawner_get_the()
     return theSpawner;
 }
 
-Spawner* enemy_spawner_new(GFC_List *spawnlist)
+Spawner* enemy_spawner_new(GFC_List *spawnlist, int max)
 {
     if (!spawnlist) return NULL;
     Spawner* spawner = gfc_allocate_array(sizeof(Spawner), 1);
@@ -22,11 +22,11 @@ Spawner* enemy_spawner_new(GFC_List *spawnlist)
     spawner->spawnlist = spawnlist;
     spawner->totalCount = gfc_list_get_count(spawnlist);
     spawner->currentIndex = 0;
-    spawner->maxSimultaneous = 2;
+    spawner->maxSimultaneous = max;
     spawner->finished = 0;
     spawner->alive = 0;
 
-    slog("Spawner created: totalCount = %d", spawner->totalCount);
+    slog("spawner created: total enemies = %d", spawner->totalCount);
     theSpawner = spawner;
     return spawner;
 }
@@ -34,31 +34,24 @@ Spawner* enemy_spawner_new(GFC_List *spawnlist)
 void enemy_spawner_update(Spawner* spawner, World* world)
 {
     if (!spawner || !world || !spawner->spawnlist) return;
-    if (spawner->alive >= spawner->maxSimultaneous)
-    {
-        slog("alive > spawner");
-        return;
-    }
+    if (spawner->alive >= spawner->maxSimultaneous) return;
 
     while (spawner->alive < spawner->maxSimultaneous && spawner->currentIndex < spawner->totalCount)
     {
         SpawnInfo* info = gfc_list_get_nth(spawner->spawnlist, spawner->currentIndex++);
-        if (!info || !info->enemytype) continue;
+        if (!info || !info->name || !info->enemytype) continue;
 
-        Entity* enemy = enemy_new(info->enemytype);
+        Entity* enemy = enemy_new(info->name, info->enemytype);
         if (!enemy) continue;
 
         gfc_list_append(&world->entityList, enemy);
         spawner->alive++;
-        //slog("Spawned enemy #%d at (%.1f, %.1f)", spawner->currentIndex - 1, info->position.x, info->position.y);
-        //slog("Spawned enemy #%d", spawner->currentIndex - 1);
         slog("Spawned enemy: %s (%s)", info->name, info->enemytype);
     }
 
-    if (spawner->currentIndex >= spawner->totalCount)
+    if (spawner->currentIndex >= spawner->totalCount && spawner->alive < 1);
     {
         spawner->finished = 1;
-        slog("Spawner finished: all enemies spawned and defeated.");
     }
 }
 

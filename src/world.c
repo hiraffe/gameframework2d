@@ -110,12 +110,8 @@ void world_load_spawnlist(World *world, SJson* spawnlist)
 		if (strcmp(enemytype, "none") != 0)
 		{
 			SpawnInfo *enemy_info = gfc_allocate_array(sizeof(SpawnInfo), 1);
-			//enemy_info->name = name;
-			//enemy_info->enemytype = enemytype;
 			enemy_info->name = s_strdup(name); 
 			enemy_info->enemytype = s_strdup(enemytype); 
-			//strncpy(enemy_info->name, name, sizeof(enemy_info->name) - 1);
-			//strncpy(enemy_info->enemytype, ", sizeof(enemy_info->enemytype) - 1);
 			gfc_list_append(&world->enemylist, enemy_info);
 			//slog("enemy added: %s, type: %s", enemy_info->name, enemy_info->enemytype);
 		}
@@ -123,30 +119,8 @@ void world_load_spawnlist(World *world, SJson* spawnlist)
 		{
 			continue;
 		}
-		
 		//gfc_list_append(&world->entityList, entity);
 	}
-	//im printing the spawn list
-	
-	int c = gfc_list_get_count(&world->enemylist);
-	slog("Spawn list has %d elements", c);
-
-	for (int j = 0; j < c; j++)
-	{
-		SpawnInfo* in = (SpawnInfo*)gfc_list_get_nth(&world->enemylist, j);
-		if (!in)
-		{
-			slog("Item %d: NULL", j);
-			continue;
-		}
-
-		slog("Item %d: name = %s enemytype = %s",
-			j,
-			in->name,
-			in->enemytype
-		);
-	}
-	//end
 }
 
 World* world_load(const char* filename)
@@ -163,6 +137,7 @@ World* world_load(const char* filename)
 	const char* tileSet;
 	const char* background;
 	int frame_w, frame_h, fpl;
+	int max_sim;
 
 	if (!filename)
 	{
@@ -227,6 +202,9 @@ World* world_load(const char* filename)
 		fpl,
 		1);
 	world_tile_layer(world);
+
+	sj_object_get_value_as_int(wjson, "enemyMaxSimultaneous", &max_sim);
+	world->enemy_max_sim = max_sim;
 
 	spawnlist = sj_object_get_value(wjson, "spawnList");
 	if (!spawnlist)

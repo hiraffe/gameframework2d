@@ -14,7 +14,8 @@ typedef enum
 	GS_MainLoop,
 	GS_PauseMenu,
 	GS_DeathMenu,
-	GS_EnemyEditor,
+	GS_WinMenu,
+	GS_EditorMenu,
 	GS_Quit
 }GameState;
 

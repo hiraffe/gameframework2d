@@ -28,6 +28,7 @@ typedef struct
 	//GFC_Vector2I ^^
 	GFC_List		entityList;		/*<list of entities in the world*/
 	GFC_List		*enemylist;		/*<list of enemies in the world*/
+	Uint8			enemy_max_sim;	/*<maximum number of simultaneous enemies*/
 	//Spawner*			spawner;ehehehehheahfuahewfuiwaf
 }World;
 
@@ -63,10 +64,10 @@ void world_load_spawnlist(World* world, SJson *spawnlist);
 
 /**
  * @brief allocate a new empty world
+ * @param mapSize size of the world
  * @return NULL on error, or a blank world
  */
 World *world_new(GFC_Vector2I mapSize);
-//World* world_new();
 
 /**
  * @brief free a previously allocated world

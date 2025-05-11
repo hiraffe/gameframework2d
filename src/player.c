@@ -355,7 +355,7 @@ void player_think(Entity* self)
 			else if (entity_collision(data->nearmiss, other->bounds))
 			{
 				data->tp++;
-				slog("tp: %d", data->tp);
+				//slog("tp: %d", data->tp);
 			}
 		}
 	}

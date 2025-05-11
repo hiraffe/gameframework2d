@@ -8,7 +8,7 @@ void monster_update(Entity* self);
 void monster_free(Entity* self);
 void monster_on_hit(Entity* self, int dmg);
 
-Entity* monster_new(MonsterType type)
+Entity* monster_new(MonsterType type, const char* parent_id)
 {
 	Entity* self;
 	MonsterEntityData* data;
@@ -39,6 +39,8 @@ Entity* monster_new(MonsterType type)
 	data = gfc_allocate_array(sizeof(MonsterEntityData), 1);
 	if (data)
 	{
+		data->parent_id = parent_id;
+		slog("parent_id: %s", data->parent_id);
 		data->type = type;
 		switch (type)
 		{
@@ -63,7 +65,6 @@ Entity* monster_new(MonsterType type)
 		}
 	}
 	self->data = data;
-
 	return self;
 }
 

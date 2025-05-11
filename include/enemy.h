@@ -17,10 +17,12 @@ typedef enum
 
 typedef struct
 {
-	GFC_TextLine name;
-	int count;
-	int monster_max;
-	EnemyType type;
+	//GFC_TextLine name;
+	const char*		name;				/*<name of the kind of enemy*/
+	const char*		id;					/*<unique name of the enemy in the world*/
+	int				monster_count;		/*<number of current monsters*/
+	int				monster_max;		/*<maximum number of monsters allowed*/
+	GFC_List*		spawned_monsters;	/*<number of monsters spawned in currently*/
 }EnemyEntityData;
 
 void monster_tester();

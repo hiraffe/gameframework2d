@@ -14,7 +14,8 @@ typedef enum
 
 typedef struct
 {
-	MonsterType type;
+	const char*	parent_id;	/*<the name of the enemy that spawned the monster*/
+	MonsterType type;		/*<behavior type of the monster*/
 }MonsterEntityData;
 
 /**
@@ -22,6 +23,8 @@ typedef struct
  * @param type what kind of monster to spawn
  * @return NULL on error, or a pointer to the spawned player entity
  */
-Entity* monster_new(MonsterType type);
+Entity* monster_new(MonsterType type, const char* parent_id);
+
+void monster_free(Entity* self); 
 
 #endif

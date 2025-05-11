@@ -14,14 +14,31 @@ typedef struct
 	Uint32		alive;				/*<number of enemies currently alive*/
 }Spawner;
 
-Spawner* spawner_get_the();
-Spawner* enemy_spawner_new(GFC_List* spawnlist);
-void enemy_spawner_update(Spawner* spawner, World* world);
-int spawner_count_alive(Spawner* spawner);
-void enemy_spawner_free(Spawner* spawner);
 /**
- * @brief idk
+ * @brief function to get the spawner
+ * @return the spawner
  */
- //Entity* spawn_entity(cont char )
+Spawner* spawner_get_the();
+
+/**
+ * @brief allocate a new spawner
+ * @param spawnlist list of enemies to be spawned
+ * @return the spawner
+ */
+Spawner* enemy_spawner_new(GFC_List* spawnlist, int max);
+
+/**
+ * @brief update the spawner
+ * @param spawner the spawner to update
+ * @param world the current world
+ */
+void enemy_spawner_update(Spawner* spawner, World* world);
+
+/**
+ * @brief free a previously allocated spawner
+ * @param spawner the spawner to free
+ */
+void enemy_spawner_free(Spawner* spawner);
+
 
 #endif

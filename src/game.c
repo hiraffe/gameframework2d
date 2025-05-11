@@ -75,7 +75,8 @@ int main(int argc, char * argv[])
     world = world_load("maps/testworld.map");
     //enemy = enemy_new();
     item_spawner = item_get_spawner();
-    enemy_spawner = enemy_spawner_new(&world->enemylist);
+    enemy_spawner = enemy_spawner_new(&world->enemylist, 1);
+    //enemy_spawner = enemy_spawner_new(&world->enemylist, world->enemy_max_sim);
 
     //slog();
     //blaster = MIX_LoadWAV("the sound file"); MIX_LoadMUS
