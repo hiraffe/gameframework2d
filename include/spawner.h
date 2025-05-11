@@ -11,11 +11,13 @@ typedef struct
 	GFC_List*	spawnlist;			/*<list of SpawnInfo*/
 	int			totalCount;			/*<total count of current alive enemies*/
 	int			finished;			/*<flag if spawning is done*/
+	Uint32		alive;				/*<number of enemies currently alive*/
 }Spawner;
 
+Spawner* spawner_get_the();
 Spawner* enemy_spawner_new(GFC_List* spawnlist);
 void enemy_spawner_update(Spawner* spawner, World* world);
-int count_alive_enemies(GFC_List* entities);
+int spawner_count_alive(Spawner* spawner);
 void enemy_spawner_free(Spawner* spawner);
 /**
  * @brief idk

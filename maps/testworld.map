@@ -60,11 +60,11 @@
 			},
 			{
 				"name":"enemy1",
-				"enemytype":"girl"
+				"enemytype":"guy"
 			},
 			{
 				"name":"enemy2",
-				"enemytype":"guy"
+				"enemytype":"bug"
 			},
 			{
 				"name":"enemy3",

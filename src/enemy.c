@@ -2,6 +2,7 @@
 
 #include "enemy.h"
 #include "monster.h"
+#include "spawner.h"
 
 void enemy_think(Entity* self);
 void enemy_update(Entity* self);
@@ -173,6 +174,8 @@ void enemy_on_hit(Entity* self, int dmg)
 	self->health -= dmg;
 	self->frame = 0;
 	if (self->health < 0) {
+		Spawner* spawner = spawner_get_the();
+		spawner->alive--;
 		enemy_free(self);
 		slog("enemy killed");
 	}

@@ -117,7 +117,7 @@ void world_load_spawnlist(World *world, SJson* spawnlist)
 			//strncpy(enemy_info->name, name, sizeof(enemy_info->name) - 1);
 			//strncpy(enemy_info->enemytype, ", sizeof(enemy_info->enemytype) - 1);
 			gfc_list_append(&world->enemylist, enemy_info);
-			slog("enemy added: %s, type: %s", enemy_info->name, enemy_info->enemytype);
+			//slog("enemy added: %s, type: %s", enemy_info->name, enemy_info->enemytype);
 		}
 		else
 		{
@@ -317,8 +317,8 @@ void world_enemylist_clear(GFC_List *list)
 		SpawnInfo* info = gfc_list_get_nth(list, i);
 		if (!info) continue;
 
-		free(info->name);
-		free(info->enemytype);
+		if (info->name) free(info->name);
+		if(info->enemytype) free(info->enemytype); 
 		free(info);
 	}
 	gfc_list_delete(list);
@@ -334,7 +334,7 @@ void world_free(World* world)
 	if (world->tileMap) free(world->tileMap);
 	//spawnlist
 	//free every entity in the world
-	world_enemylist_clear(world->enemylist);
+	//world_enemylist_clear(world->enemylist);
 	world->enemylist = NULL;
 	free(world);
 	slog("world freed");
