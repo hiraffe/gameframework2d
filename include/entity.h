@@ -50,6 +50,7 @@ typedef struct Entity_S
 	GFC_Vector2D	velocity;		/**<how we are moving*/
 	GFC_Vector2D	acceleration;	
 	float			rotation;
+	GFC_Color		color;
 	void			(*think)(struct Entity_S* self);	/**<function to call to make decisions*/
 	void			(*update)(struct Entity_S* self);	/**<function to call to execute those decisions*/
 	void			(*free)(struct Entity_S* self);	/**<clean up any custom allocated data*/

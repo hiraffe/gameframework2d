@@ -8,7 +8,7 @@ void item_free(Entity* self);
 
 ItemSpawner spawner = {
 	.timer = 0,
-	.interval = 10.0f,  // spawn every 2 seconds
+	.interval = 10.0f,  // spawn every 10 seconds
 	.max_items = 10,
 	.items_spawned = 0,
 	//.spawnList = spawnlist  // optional: from world JSON
@@ -73,6 +73,12 @@ Entity* item_new(PowerUp powerup)
 	{
 		data->power = powerup;
 		data->powertime = 3000;
+
+		if (powerup == PU_double) self->color = GFC_COLOR_LIGHTCYAN;
+		if (powerup == PU_triple) self->color = GFC_COLOR_CYAN;
+		if (powerup == PU_quad) self->color = GFC_COLOR_DARKCYAN;
+		if (powerup == PU_reload) self->color = GFC_COLOR_MAGENTA;
+		if (powerup == PU_speedy) self->color = GFC_COLOR_YELLOW;
 	}
 	self->data = data;
 

@@ -20,7 +20,9 @@ typedef struct
 	int inventory[10];
 	int lastAttack;
 	int cooldown;
+	int class_speed;
 	int speed;
+	int health_max;
 	const char* special;
 	PowerUp power;
 	int powerExpiry;

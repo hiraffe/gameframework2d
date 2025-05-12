@@ -171,7 +171,6 @@ Entity* enemy_new(const char* id, const char* name)
 		{
 			data->monster_max = 15;
 		}
-		//data->spawned_monsters = gfc_list_new();
 	}
 	self->data = data;
 	return self;
@@ -197,7 +196,7 @@ void enemy_on_hit(Entity* self, int dmg)
 			if (!child || child->team != ETT_monster) continue;
 			MonsterEntityData* child_data = (MonsterEntityData*)child->data;
 			if (!child_data) continue;
-			slog("child: %s, parent: %s", child_data->parent_id, data->id);
+			//slog("child: %s, parent: %s", child_data->parent_id, data->id);
 			if (strcmp(child_data->parent_id, data->id) == 0)
 			{
 				monster_free(child);
@@ -216,13 +215,10 @@ void enemy_spawn_monsters (Entity* self, const char* name)
 	if (strcmp(name, "bug") == 0)
 	{
 		Entity* monster = monster_new(MT_hbounce, data->id);
-		/*
-		if (monster && self)
-		{
-			EnemyEntityData* data = (EnemyEntityData*)self->data;
-			gfc_list_append(&data->spawned_monsters, monster);
-		}
-		*/
+	}
+	else if (strcmp(name, "guy") == 0)
+	{
+		Entity* monster = monster_new(MT_down, data->id);
 	}
 }
 
@@ -236,6 +232,8 @@ void enemy_think(Entity* self)
 		enemy_spawn_monsters(self, data->name);
 		data->monster_max--;
 	}
+
+
 
 	if (self->position.x >= 1000)
 	{

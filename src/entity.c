@@ -133,17 +133,20 @@ void entity_draw(Entity* self)
 	if (!self) return;
 	if (!self->sprite) return;
 
+	GFC_Color defaultColor = gfc_color(1,1,1,1);
+
 	gf2d_sprite_render(
-		self->sprite,
-		self->position,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		(Uint32)self->frame);
+		self->sprite,			//sprite
+		self->position,			//position
+		NULL,					//scale
+		NULL,					//center
+		NULL,					//rotation
+		NULL,					//flip
+		self->color.a > 0 ? &self->color : &defaultColor,			//color
+		NULL,					//clip
+		(Uint32)self->frame);	//frame
 	
+
 	//if (_DRAWBOUNDS)
 	//{
 		GFC_Rect rect;

@@ -40,7 +40,7 @@ Entity* monster_new(MonsterType type, const char* parent_id)
 	if (data)
 	{
 		data->parent_id = parent_id;
-		slog("parent_id: %s", data->parent_id);
+		//slog("parent_id: %s", data->parent_id);
 		data->type = type;
 		switch (type)
 		{

@@ -9,7 +9,8 @@
 			"special":"blast",
 			"health":100,
 			"speed":5,
-			"cooldown":400
+			"cooldown":400,
+			"color":[255,255,255,255]
 		},
 		{
 			"name":"defender",
@@ -20,7 +21,8 @@
 			"special":"shield",
 			"health":200,
 			"speed":3,
-			"cooldown":500
+			"cooldown":500,
+			"color":[210,190,255,255]
 		},
 		{
 			"name":"magician",
@@ -31,7 +33,8 @@
 			"special":"healing",
 			"health":75,
 			"speed":7,
-			"cooldown":300
+			"cooldown":300,
+			"color":[200,255,255,255]
 		}
 	]
 }

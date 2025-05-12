@@ -1,6 +1,8 @@
 #ifndef __ITEM_H__
 #define __ITEM_H__
 
+#include "gf2d_sprite.h"
+
 #include "entity.h"
 #include "player.h"
 #include "world.h"
@@ -15,8 +17,8 @@ typedef struct {
 
 typedef struct
 {
-	PowerUp power;
-	int powertime;
+	PowerUp     power;          /*<what power it gives to the player*/
+	int         powertime;
     ItemSpawner spawner;
 }ItemEntityData;
 

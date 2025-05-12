@@ -195,9 +195,10 @@ void player_change_class(const char* type)
 	Entity* self = player_get_the();
 	PlayerEntityData* data = (PlayerEntityData*)self->data;
 	if (!self || !self->data) return;
-	SJson* def;
+	SJson* def, *color;
 	const char* sprite_img;
 	int frame_w, frame_h, fpl, health, speed, cooldown;
+	float r = 0, g = 0, b = 0, a = 0;
 
 	def = player_classes_get_def_by_name(type);
 
@@ -214,6 +215,16 @@ void player_change_class(const char* type)
 
 	sj_object_get_value_as_int(def, "health", &health);
 	self->health = health;
+	data->health_max = health;
+
+	color = sj_object_get_value(def, "color");
+	if (color) {
+		sj_get_float_value(sj_array_get_nth(color, 0), &r);
+		sj_get_float_value(sj_array_get_nth(color, 1), &g);
+		sj_get_float_value(sj_array_get_nth(color, 2), &b);
+		sj_get_float_value(sj_array_get_nth(color, 3), &a);
+	}
+	self->color = gfc_color8(r, g, b, a);
 
 	data->neededxp = 1000;
 
@@ -225,7 +236,7 @@ void player_change_class(const char* type)
 	data->power = PU_none;
 
 	sj_object_get_value_as_int(def, "speed", &speed);
-	data->speed = speed;
+	data->class_speed = speed;
 
 	slog("class changed to %s", type);
 }
@@ -296,7 +307,7 @@ void player_think(Entity* self)
 	}
 	else
 	{
-		data->speed = 4;
+		data->speed = data->class_speed;
 	}
 
 	//move = self->position;
