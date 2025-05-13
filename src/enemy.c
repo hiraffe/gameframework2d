@@ -1,4 +1,5 @@
 #include "simple_logger.h"
+#include "gfc_audio.h"
 
 #include "enemy.h"
 #include "monster.h"
@@ -14,7 +15,7 @@ static SJson* _enemyDefs = NULL;
 
 void monster_tester()
 {
-	Entity* monster1, * monster2, * monster3, * monster4, * monster5;
+	//Entity* monster1, * monster2, * monster3, * monster4, * monster5;
 	//monster1 = monster_new(MT_wave); //add monsters
 	//monster2 = monster_new(MT_hbounce);
 	//monster3 = monster_new(MT_down);
@@ -127,7 +128,7 @@ Entity* enemy_new(const char* id, const char* name)
 	EnemyEntityData* data;
 	SJson* def;
 	const char* sprite_img;
-	int frame_w, frame_h, y, health;
+	int frame_w, frame_h, y, health, monsters, delay;
 
 	self = entity_new();
 	if (!self)
@@ -166,11 +167,11 @@ Entity* enemy_new(const char* id, const char* name)
 		data->name = name;
 		data->id = id;
 		data->monster_count = 0;
-		data->monster_max = 10;
-		if (strcmp(data->name, "bug") == 0)
-		{
-			data->monster_max = 15;
-		}
+		sj_object_get_value_as_int(def, "monsters", &monsters);
+		data->monster_max = monsters;
+		data->delaying = 0;
+		sj_object_get_value_as_int(def, "delay", &delay);
+		data->delay = delay;
 	}
 	self->data = data;
 	return self;
@@ -178,15 +179,26 @@ Entity* enemy_new(const char* id, const char* name)
 
 void enemy_on_hit(Entity* self, int dmg)
 {
-	if (!self) return;
 	EnemyEntityData* data = (EnemyEntityData*)self->data;
+	if (!self || !data) return;
 
 	self->health -= dmg;
 	self->frame = 0;
+
+	if (fmodf(self->health, 20.0f) == 0.0f)
+	{
+		Mix_Chunk* sound = Mix_LoadWAV("audio/hit.wav");
+		int channel = Mix_PlayChannel(-1, sound, 0);
+	}
+
+	//death
 	if (self->health < 0) {
-		//tell the spawner there is one less enemy alive
+		Mix_Chunk* sound = Mix_LoadWAV("audio/vine-boom.wav");
+		int channel = Mix_PlayChannel(-1, sound, 0);
+
 		Spawner* spawner = spawner_get_the();
 		spawner->alive--;
+		spawner->dead++;
 
 		//kill all monsters that were spawned by this guy
 		EntitySystem entity_system = entity_get_system();
@@ -211,34 +223,67 @@ void enemy_spawn_monsters (Entity* self, const char* name)
 {
 	if (!self) return;
 	EnemyEntityData* data = (EnemyEntityData*)self->data;
+	Entity* monster;
 
 	if (strcmp(name, "bug") == 0)
 	{
-		Entity* monster = monster_new(MT_hbounce, data->id);
+		monster = monster_new(MT_hbounce, data->id);
 	}
 	else if (strcmp(name, "guy") == 0)
 	{
-		Entity* monster = monster_new(MT_down, data->id);
+		monster = monster_new(MT_down, data->id);
 	}
+	else if (strcmp(name, "dude") == 0)
+	{
+		monster = monster_new(MT_smallwave, data->id);
+	}
+	else if (strcmp(name, "googly") == 0)
+	{
+		monster = monster_new(MT_largewave, data->id);
+	}
+
+	data->monster_count++;
 }
 
 void enemy_think(Entity* self)
 {
 	if (!self) return;
 	EnemyEntityData* data = (EnemyEntityData*)self->data;
+	Uint32 now = SDL_GetTicks();
 
-	while (data->monster_max > 0)
-	{
-		enemy_spawn_monsters(self, data->name);
-		data->monster_max--;
-	}
-
-
-
+	//move into position
 	if (self->position.x >= 1000)
 	{
 		self->position.x -= 4;
 	}
+
+	//check if we're in a waiting state
+	if (data->delaying)
+	{
+		if (now - data->spawn_time >= data->delay) // 3000 ms = 3 seconds
+		{
+			data->monster_count = 0;
+			data->delaying = 0;
+		}
+		return;
+	}
+	
+	//while (data->monster_max > 0)
+	while(data->monster_count <= data->monster_max)
+	{
+		enemy_spawn_monsters(self, data->name);
+		data->monster_count++;
+	}
+
+	if (strcmp(data->name, "bug") != 0 && data->monster_count >= data->monster_max)
+	{
+		data->spawn_time = SDL_GetTicks();  // Start the delay timer
+		data->delaying = 1;
+		data->monster_count = 0;
+	}
+
+
+	
 	
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 }

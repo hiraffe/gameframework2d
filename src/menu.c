@@ -2,6 +2,7 @@
 
 #include "menu.h"
 #include "player.h"
+#include "spawner.h"
 
 static Sprite* menu_bg = NULL;
 static Sprite* start_button = NULL;
@@ -24,6 +25,26 @@ static GFC_Vector4D magician_bounds = { 720, 370, 200, 50 };
 
 static int menu_loaded;
 
+GameState check_winloss()
+{
+    Entity* player = player_get_the();
+    Spawner* spawner = spawner_get_the();
+    if (!player || !spawner) return;
+
+    if (player->health <= 0)
+    {
+        return GS_GameOver;
+    }
+
+    if (spawner->dead >= spawner->totalCount)
+    {
+        return GS_WinMenu;
+    }
+
+    return GS_MainLoop;
+}
+
+/*============================================================ Main Menu ============================================================ */
 GameState main_menu_update(const Uint8* keys, int mx, int my)
 {
     if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
@@ -56,17 +77,10 @@ void main_menu_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC_
     gf2d_sprite_draw_image(quit_button, gfc_vector2d(500, 440));
 
     //draw mouse
-    gf2d_sprite_draw(
-        mouse,
-        gfc_vector2d(mx, my),
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        &mouseGFC_Color,
-        (int)mf);
+    gf2d_sprite_draw(mouse, gfc_vector2d(mx, my), NULL, NULL, NULL, NULL, &mouseGFC_Color, (int)mf);
 }
 
+/*============================================================ Player Select ============================================================ */
 GameState player_select_update(const Uint8* keys, int mx, int my)
 {
     if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
@@ -112,17 +126,10 @@ void player_select_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouse
     gf2d_sprite_draw_image(back_button, gfc_vector2d(500, 440));
 
     //draw mouse
-    gf2d_sprite_draw(
-        mouse,
-        gfc_vector2d(mx, my),
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        &mouseGFC_Color,
-        (int)mf);
+    gf2d_sprite_draw(mouse, gfc_vector2d(mx, my), NULL, NULL, NULL, NULL, &mouseGFC_Color, (int)mf);
 }
 
+/*============================================================ Pause Menu ============================================================ */
 GameState pause_menu_update(const Uint8* keys, int mx, int my)
 {
     if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
@@ -153,18 +160,51 @@ void pause_menu_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC
     gf2d_sprite_draw_image(back_button, gfc_vector2d(500, 440));
 
     //draw mouse
-    gf2d_sprite_draw(
-        mouse,
-        gfc_vector2d(mx, my),
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        &mouseGFC_Color,
-        (int)mf);
+    gf2d_sprite_draw(mouse, gfc_vector2d(mx, my), NULL, NULL, NULL, NULL, &mouseGFC_Color, (int)mf);
 }
 
+/*============================================================ Game Over ============================================================ */
 GameState game_over_update(const Uint8* keys, int mx, int my)
+{
+    if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
+    {
+        if (mouse_over_button(mx, my, back_bounds))
+        {
+            return GS_MainMenu;
+        }
+        if (mouse_over_button(mx, my, quit_bounds))
+        {
+            return GS_Quit;
+        }
+    }
+    return GS_GameOver;
+}
+
+void game_over_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC_Color)
+{
+    if (!menu_loaded)
+    {
+        menu_bg = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+        back_button = gf2d_sprite_load_image("images/buttons/back.png");
+        quit_button = gf2d_sprite_load_image("images/buttons/quit.png");
+    }
+
+    gf2d_sprite_draw_image(menu_bg, gfc_vector2d(0, 0));
+    gf2d_sprite_draw_image(back_button, gfc_vector2d(500, 370));
+    gf2d_sprite_draw_image(quit_button, gfc_vector2d(500, 440));
+
+    //draw mouse
+    gf2d_sprite_draw(mouse, gfc_vector2d(mx, my), NULL, NULL, NULL, NULL, &mouseGFC_Color, (int)mf);
+}
+
+int mouse_over_button(int mx, int my, GFC_Vector4D button)
+{
+    return (mx >= button.x && mx <= button.x + button.z &&
+        my >= button.y && my <= button.y + button.w);
+}
+
+/*============================================================ Game Win ============================================================ */
+GameState win_menu_update(const Uint8* keys, int mx, int my)
 {
     if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
     {
@@ -177,36 +217,22 @@ GameState game_over_update(const Uint8* keys, int mx, int my)
             return GS_MainMenu;
         }
     }
-    return GS_PauseMenu;
+    return GS_WinMenu;
 }
 
-void game_over_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC_Color)
+void win_menu_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC_Color)
 {
     if (!menu_loaded)
     {
         menu_bg = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+        resume_button = gf2d_sprite_load_image("images/buttons/resume.png");
         back_button = gf2d_sprite_load_image("images/buttons/back.png");
-        quit_button = gf2d_sprite_load_image("images/buttons/back.png");
     }
 
     gf2d_sprite_draw_image(menu_bg, gfc_vector2d(0, 0));
-    gf2d_sprite_draw_image(back_button, gfc_vector2d(500, 370));
-    gf2d_sprite_draw_image(quit_button, gfc_vector2d(500, 440));
+    gf2d_sprite_draw_image(resume_button, gfc_vector2d(500, 370));
+    gf2d_sprite_draw_image(back_button, gfc_vector2d(500, 440));
 
     //draw mouse
-    gf2d_sprite_draw(
-        mouse,
-        gfc_vector2d(mx, my),
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        &mouseGFC_Color,
-        (int)mf);
-}
-
-int mouse_over_button(int mx, int my, GFC_Vector4D button)
-{
-    return (mx >= button.x && mx <= button.x + button.z &&
-        my >= button.y && my <= button.y + button.w);
+    gf2d_sprite_draw(mouse, gfc_vector2d(mx, my), NULL, NULL, NULL, NULL, &mouseGFC_Color, (int)mf);
 }

@@ -1,34 +1,63 @@
 {
-	"enemies":[
+	"enemies": [
 		{
-			"name":"girl",
+			"name": "girl",
 			"displayName": "Moth Girl",
-			"image":"images/moth_girl.png",
-			"frame_w":128,
-			"frame_h":384,
-			"fpl":2,
-			"y":150,
-			"health":100
+			"image": "images/moth_girl.png",
+			"frame_w": 128,
+			"frame_h": 384,
+			"fpl": 2,
+			"y": 150,
+			"health": 100,
+			"monsters": 1
 		},
 		{
-			"name":"guy",
-			"displayName":"Thingy",
-			"image":"images/ed210.png",
-			"frame_w":128,
-			"frame_h":128,
-			"fpl":16,
-			"y":150,
-			"health":50
+			"name": "guy",
+			"displayName": "Thingy",
+			"image": "images/ed210.png",
+			"frame_w": 128,
+			"frame_h": 128,
+			"fpl": 16,
+			"y": 150,
+			"health": 50,
+			"monsters": 20,
+			"delay": 1500
 		},
 		{
-			"name":"bug",
-			"displayName":"Bug",
-			"image":"images/space_bug.png",
-			"frame_w":128,
-			"frame_h":128,
-			"fpl":16,
-			"y":450,
-			"health":75
+			"name": "bug",
+			"displayName": "Bug",
+			"image": "images/space_bug.png",
+			"frame_w": 128,
+			"frame_h": 128,
+			"fpl": 16,
+			"y": 450,
+			"health": 75,
+			"monsters": 15,
+			"delay": 3000
+		},
+		{
+			"name": "dude",
+			"displayName": "Hello",
+			"image": "images/space_bug.png",
+			"frame_w": 128,
+			"frame_h": 128,
+			"fpl": 16,
+			"y": 200,
+			"health": 75,
+			"monsters": 1,
+			"delay": 300
+		},
+		{
+			"name": "googly",
+			"displayName": "Bye",
+			"image": "images/space_bug.png",
+			"frame_w": 128,
+			"frame_h": 128,
+			"fpl": 16,
+			"y": 400,
+			"health": 75,
+			"monsters": 20,
+			"delay": 150
 		},
 		{
 			"name":"custom",
@@ -38,7 +67,8 @@
 			"frame_h":128,
 			"fpl":16,
 			"y":450,
-			"health":5
+			"health": 5,
+			"monsters": 10
 		}
 	]
 }

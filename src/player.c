@@ -118,80 +118,18 @@ Entity* player_new()
 	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
 	if (data)
 	{
-		data->neededxp = 1000;
 		data->cooldown = 400;
 		data->power = PU_none;
 		data->speed = 5;
 		data->nearmiss = (GFC_Rect){ self->position.x, self->position.y, self->sprite->frame_w, self->sprite->frame_h };
 		data->tp = 0;
+		data->neededtp = 1000;
 	}
 	self->data = data;
 	thePlayer = self; //
 	return self;
 }
-/*
-Entity* player_new(const char* type)
-{
-	Entity* self;
-	PlayerEntityData* data;
-	SJson* def;
-	const char* sprite_img;
-	int frame_w, frame_h, fpl, health, speed, cooldown;
 
-	if (thePlayer)
-	{
-		//gfc_vector2d_copy(self->position, position);
-		return thePlayer;
-	}
-	self = entity_new();
-	if (!self)
-	{
-		slog("failed to spawn a new player entity");
-		return NULL;
-	}
-	def = player_classes_get_def_by_name(type);
-
-	sprite_img = sj_object_get_value_as_string(def, "image");
-	sj_object_get_value_as_int(def, "frame_w", &frame_w);
-	sj_object_get_value_as_int(def, "frame_h", &frame_h);
-	sj_object_get_value_as_int(def, "fpl", &fpl);
-	self->sprite = gf2d_sprite_load_all(
-		sprite_img,
-		frame_w,
-		frame_h,
-		fpl,
-		0);
-	
-	self->frame = 0;
-	self->position = gfc_vector2d(500,450);
-	self->team = ETT_player;
-	sj_object_get_value_as_int(def, "health", &health);
-	self->health = health;
-	self->bounds = (GFC_Rect){self->position.x+8,self->position.y+8,28,28};
-
-	self->onHit = player_on_hit;
-	self->think = player_think;
-	self->update = player_update;
-	self->free = player_free;
-
-	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
-	if (data)
-	{
-		data->neededxp = 1000;
-		data->special = sj_object_get_value_as_string(def, "special");
-		sj_object_get_value_as_int(def, "cooldown", &cooldown);
-		data->cooldown = cooldown;
-		data->power = PU_none;
-		sj_object_get_value_as_int(def, "speed", &speed);
-		data->speed = speed;
-		data->nearmiss = (GFC_Rect){ self->position.x, self->position.y, self->sprite->frame_w, self->sprite->frame_h };
-		data->tp = 0;
-	}
-	self->data = data;
-	thePlayer = self; //
-	return self;
-}
-*/
 void player_change_class(const char* type)
 {
 	Entity* self = player_get_the();
@@ -199,7 +137,7 @@ void player_change_class(const char* type)
 	if (!self || !self->data) return;
 	SJson* def, *color;
 	const char* sprite_img;
-	int frame_w, frame_h, fpl, health, speed, cooldown;
+	int frame_w, frame_h, fpl, health, speed, cooldown, neededtp;
 	float r = 0, g = 0, b = 0, a = 0;
 
 	def = player_classes_get_def_by_name(type);
@@ -228,7 +166,8 @@ void player_change_class(const char* type)
 	}
 	self->color = gfc_color8(r, g, b, a);
 
-	data->neededxp = 1000;
+	sj_object_get_value_as_int(def, "neededtp", &neededtp);
+	data->neededtp = neededtp;
 
 	data->special = sj_object_get_value_as_string(def, "special");
 
@@ -242,6 +181,32 @@ void player_change_class(const char* type)
 
 	slog("class changed to %s", type);
 }
+
+void player_draw_ui()
+{
+	Entity* self = player_get_the();
+	PlayerEntityData* data = (PlayerEntityData*)self->data; 
+	if (!self || !self->data) return;
+	
+	float hp_percent = (float)self->health / data->health_max;
+	GFC_Rect hp_background = { 40, 650, 80, 16 };
+	GFC_Rect hp_foreground = { 40, 650, (int)(80 * hp_percent), 16 };
+	GFC_Rect hp_outline = { 40, 650, 80, 16 };
+
+	gf2d_draw_rect_filled(hp_background, gfc_color8(150, 0, 0, 255));
+	gf2d_draw_rect_filled(hp_foreground, gfc_color8(0, 255, 0, 255));  
+	gf2d_draw_rect(hp_outline, gfc_color8(0, 0, 0, 255));
+
+	float tp_percent = (float)data->tp / data->neededtp;
+	GFC_Rect tp_background = { 136, 650, 80, 16 };
+	GFC_Rect tp_foreground = { 136, 650, (int)(80 * tp_percent), 16 };
+	GFC_Rect tp_outline = { 136, 650, 80, 16 };
+
+	gf2d_draw_rect_filled(tp_background, GFC_COLOR_DARKBLUE);
+	gf2d_draw_rect_filled(tp_foreground, GFC_COLOR_YELLOW);
+	gf2d_draw_rect(tp_outline, gfc_color8(0, 0, 0, 255));
+}
+
 
 void player_attack(Entity* self, ProjectileDir dir)
 {
@@ -287,6 +252,7 @@ void player_on_hit(Entity* self, int dmg)
 	int channel = Mix_PlayChannel(-1, sound, 0);
 
 	if (self->health <= 0) {
+		self->health = 0;
 		slog("You Died!");
 	}
 }
@@ -301,6 +267,7 @@ void player_think(Entity* self)
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	Uint32 curr = SDL_GetTicks();
 
+	// time powerups
 	if (data->power != PU_none && curr > data->powerExpiry)
 	{
 		data->power = PU_none;
@@ -371,6 +338,10 @@ void player_think(Entity* self)
 			else if (entity_collision(data->nearmiss, other->bounds))
 			{
 				data->tp++;
+				if (data->tp >= data->neededtp)
+				{
+					data->tp = data->neededtp;
+				}
 				//slog("tp: %d", data->tp);
 				if (data->tp % 20 == 0)
 				{

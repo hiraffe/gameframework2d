@@ -5,11 +5,12 @@
 
 typedef enum
 {
-	MT_wave,	// moves in sine wave
-	MT_hbounce,	// bounce between walls horizontal
-	MT_down,	// moves straight down
-	MT_mfollow,	// follows the mouse
-	MT_pfollow	// follows the player
+	MT_smallwave,	// moves in sine wave
+	MT_largewave,	// a larger wave
+	MT_hbounce,		// bounce between walls horizontal
+	MT_down,		// moves straight down
+	MT_mfollow,		// follows the mouse
+	MT_pfollow		// follows the player
 }MonsterType;
 
 typedef struct
@@ -24,6 +25,8 @@ typedef struct
  * @return NULL on error, or a pointer to the spawned player entity
  */
 Entity* monster_new(MonsterType type, const char* parent_id);
+
+Entity* monster_new_position(MonsterType type, const char* parent_id, GFC_Vector2D position);
 
 void monster_free(Entity* self); 
 

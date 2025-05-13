@@ -185,10 +185,11 @@ bool entity_move(Entity* self, GFC_Vector2D move)
 	//gfc_vector2d_add(self->velocity, self->velocity, self->acceleration);
 	//checc for collision
 
-	GFC_Vector2D newPosition;
+	GFC_Vector2D newPosition, positionPlusSize;
 	gfc_vector2d_add(newPosition, self->position, move);
+	positionPlusSize = gfc_vector2d(newPosition.x + self->sprite->frame_w, newPosition.y + self->sprite->frame_h);
 
-	if (!tile_is_solid(newPosition))
+	if (!tile_is_solid(newPosition) && !tile_is_solid(positionPlusSize))
 	{
 		self->position = newPosition;
 		return true;

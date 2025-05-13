@@ -16,7 +16,6 @@ typedef enum
 
 typedef struct
 {
-	int xp, neededxp;
 	int inventory[10];
 	int lastAttack;
 	int cooldown;
@@ -27,7 +26,7 @@ typedef struct
 	PowerUp power;
 	int powerExpiry;
 	GFC_Rect nearmiss;
-	int tp;
+	int tp, neededtp;
 }PlayerEntityData;
 
 /**

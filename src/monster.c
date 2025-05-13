@@ -8,6 +8,14 @@ void monster_update(Entity* self);
 void monster_free(Entity* self);
 void monster_on_hit(Entity* self, int dmg);
 
+//perhaps delete this later
+Entity* monster_new_position(MonsterType type, const char* parent_id, GFC_Vector2D position)
+{
+	Entity* self = monster_new(type, parent_id);
+	self->position = position;
+	return self;
+}
+
 Entity* monster_new(MonsterType type, const char* parent_id)
 {
 	Entity* self;
@@ -40,7 +48,6 @@ Entity* monster_new(MonsterType type, const char* parent_id)
 	if (data)
 	{
 		data->parent_id = parent_id;
-		//slog("parent_id: %s", data->parent_id);
 		data->type = type;
 		switch (type)
 		{
@@ -57,8 +64,11 @@ Entity* monster_new(MonsterType type, const char* parent_id)
 		case MT_down:
 			self->position = gfc_vector2d((rand() % 1000), 50);
 			break;
-		case MT_wave:
-			self->position = gfc_vector2d(0, 100);
+		case MT_smallwave:
+			self->position = gfc_vector2d(32, (rand() % (600 - 50)) + 50);
+			break;
+		case MT_largewave:
+			self->position = gfc_vector2d(32, 100);
 			break;
 		default:
 			self->position = gfc_vector2d((rand() % 1000) + 1, 0);
@@ -70,7 +80,12 @@ Entity* monster_new(MonsterType type, const char* parent_id)
 
 void monster_on_hit(Entity *self, int dmg)
 {
+	if (!self) return;
+	MonsterEntityData* data = (MonsterEntityData*)self->data;
+	
 	self->health -= dmg;
+
+	//death
 	if (self->health < 0) {
 		monster_free(self);
 	}
@@ -85,11 +100,19 @@ void monster_think(Entity* self)
 	GFC_Vector2D move;
 	float speed = 2.0f;
 
-	if (data->type == MT_wave)
+	if (data->type == MT_smallwave)
 	{		
 		//moves in a sin wave
 		float amplitude = 10.0f; 
 		float frequency = 0.05f; 
+		dir.y = sin(self->position.x * frequency) * amplitude;
+		dir.x = 3; // Constant horizontal movement to the right
+	}
+	else if (data->type == MT_largewave)
+	{
+		//moves in a sin wave
+		float amplitude = 15.0f;
+		float frequency = 0.02f;
 		dir.y = sin(self->position.x * frequency) * amplitude;
 		dir.x = 3; // Constant horizontal movement to the right
 	}

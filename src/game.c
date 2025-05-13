@@ -38,7 +38,7 @@ int main(int argc, char * argv[])
     Spawner* enemy_spawner = {0};
     GFC_InputController* controller;
     Mix_Chunk* sounds;
-    Mix_Music* menu_bg_music;
+    Mix_Music* menu_bg_music, *win_music;
     
     /*program initializtion*/
     init_logger("gf2d.log",0);
@@ -89,6 +89,7 @@ int main(int argc, char * argv[])
     //blaster = MIX_LoadWAV("the sound file"); MIX_LoadMUS
     //MIX_PlayMusic
     menu_bg_music = Mix_LoadMUS("audio/menu-bg-music.mp3"); 
+    win_music = Mix_LoadMUS("audio/yay.mp3");
     if (!menu_bg_music)
     {
         slog("Failed to load bg music");
@@ -129,10 +130,19 @@ int main(int argc, char * argv[])
                 player_select_draw(mx, my, mf, mouse, mouseGFC_Color); 
                 game_state = player_select_update(keys, mx, my);
                 break;
-            case GS_PauseMenu: //change this later to make a pause menu remember!!
+            case GS_PauseMenu: 
                 if(Mix_PlayingMusic()) Mix_PauseMusic();
                 pause_menu_draw(mx, my, mf, mouse, mouseGFC_Color);
                 game_state = pause_menu_update(keys, mx, my); 
+                break;
+            case GS_GameOver: 
+                if (Mix_PlayingMusic()) Mix_PauseMusic();
+                game_over_draw(mx, my, mf, mouse, mouseGFC_Color);
+                game_state = game_over_update(keys, mx, my);
+                break;
+            case GS_WinMenu: 
+                win_menu_draw(mx, my, mf, mouse, mouseGFC_Color);
+                game_state = win_menu_update(keys, mx, my);
                 break;
             case GS_MainLoop:
                 if (Mix_PausedMusic()) Mix_ResumeMusic();
@@ -151,12 +161,14 @@ int main(int argc, char * argv[])
                 //particle_system_draw();
 
                 //UI elements last
+                player_draw_ui();
                 //i just took out the mouse
 
                 if (keys[SDL_SCANCODE_ESCAPE])
                 {
                     game_state = GS_PauseMenu; 
                 }
+                game_state = check_winloss();
                 break;
             case GS_Quit:
                 done = 1;

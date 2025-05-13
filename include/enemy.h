@@ -22,6 +22,9 @@ typedef struct
 	const char*		id;					/*<unique name of the enemy in the world*/
 	int				monster_count;		/*<number of current monsters*/
 	int				monster_max;		/*<maximum number of monsters allowed*/
+	int				delaying;			/*<flag for whether to delay or not*/
+	int				delay;				/*<delay between spawning sets of monsters*/
+	Uint32			spawn_time;
 }EnemyEntityData;
 
 void monster_tester();

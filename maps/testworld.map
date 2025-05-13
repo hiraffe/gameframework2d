@@ -60,6 +60,10 @@
 				"enemytype":"none"
 			},
 			{
+				"name":"tester",
+				"enemytype":"googly"
+			},
+			{
 				"name":"enemy1",
 				"enemytype":"guy"
 			},
@@ -69,8 +73,12 @@
 			},
 			{
 				"name":"enemy3",
-				"enemytype":"bug"
-			}
+				"enemytype":"dude"
+			},
+			{
+				"name":"enemy4",
+				"enemytype":"googly"
+			},
 			{
 				"name":"boss",
 				"enemytype":"girl"

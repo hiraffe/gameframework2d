@@ -9,9 +9,10 @@ typedef struct
 	int			currentIndex;		/*<index of enemy to spawn next*/
 	int			maxSimultaneous;	/*<how many enemies can be alive at once*/
 	GFC_List*	spawnlist;			/*<list of SpawnInfo*/
-	int			totalCount;			/*<total count of current alive enemies*/
+	int			totalCount;			/*<total count enemies to be spawned*/
 	int			finished;			/*<flag if spawning is done*/
 	Uint32		alive;				/*<number of enemies currently alive*/
+	Uint32		dead;				/*<number of total enemies that have died*/
 }Spawner;
 
 /**
