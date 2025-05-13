@@ -1,4 +1,5 @@
 #include "simple_logger.h"
+#include "gfc_audio.h"
 
 #include "projectile.h"
 
@@ -54,6 +55,10 @@ void spawn_projectile(GFC_Vector2D start, ProjectileDir dir, ProjectileNum num)
 {
 	start.x = start.x + 12;
 	start.y = start.y + 12;
+
+	Mix_Chunk* sound = Mix_LoadWAV("audio/projectile-shoot.wav"); 
+	Mix_PlayChannel(-1, sound, 0);
+
 	//if double, double, if triple, triple
 	if (num == PN_double)
 	{

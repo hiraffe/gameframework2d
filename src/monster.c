@@ -140,7 +140,7 @@ void monster_think(Entity* self)
 
 	if (!entity_move(self, self->velocity))
 	{
-		slog("cant move, position: %f, %f", self->position.x, self->position.y);
+		//slog("cant move, position: %f, %f", self->position.x, self->position.y);
 		monster_free(self);
 	}
 	else

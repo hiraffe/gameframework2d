@@ -1,4 +1,5 @@
 #include "simple_logger.h"
+#include "gfc_audio.h"
 
 #include "item.h"
 
@@ -35,8 +36,6 @@ void item_spawner_update(ItemSpawner* spawner, World* world, float deltaTime)
 		Entity* item = item_new(randType);
 		if (item)
 		{
-			//ItemEntityData* data = (ItemEntityData*)item->data; 
-			//data->spawner = &spawner;
 			gfc_list_append(&world->entityList, item);
 			spawner->items_spawned++;
 			slog("Spawned item #%d", spawner->items_spawned);
@@ -94,6 +93,9 @@ void give_powerup(Entity* self, Entity* player)
 
 	p_data->power = data->power;
 	p_data->powerExpiry = curr + data->powertime;
+
+	Mix_Chunk* sound = Mix_LoadWAV("audio/powerup.wav");
+	int channel = Mix_PlayChannel(-1, sound, 0);
 }
 
 void item_think(Entity* self)

@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include "simple_logger.h"
 
 #include "gf2d_graphics.h"
@@ -36,11 +37,17 @@ int main(int argc, char * argv[])
     ItemSpawner item_spawner;
     Spawner* enemy_spawner = {0};
     GFC_InputController* controller;
-    //Mix_Chunk *blaster, Mix_Music
+    Mix_Chunk* sounds;
+    Mix_Music* menu_bg_music;
     
     /*program initializtion*/
     init_logger("gf2d.log",0);
     slog("---==== BEGIN ====---");
+    if (SDL_Init(SDL_INIT_AUDIO) < 0)
+    {
+        printf("SDL failed to initialize: %s\n", SDL_GetError());
+        return 1;
+    }
     gf2d_graphics_initialize(
         "gf2d",
         1200,
@@ -73,14 +80,21 @@ int main(int argc, char * argv[])
     slog("press [escape] to quit");
     player = player_new(); //add player
     world = world_load("maps/testworld.map");
-    //enemy = enemy_new();
     item_spawner = item_get_spawner();
     enemy_spawner = enemy_spawner_new(&world->enemylist, 1);
-    //enemy_spawner = enemy_spawner_new(&world->enemylist, world->enemy_max_sim);
 
-    //slog();
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        SDL_Log("Mix_OpenAudio failed: %s", Mix_GetError());
+    }
     //blaster = MIX_LoadWAV("the sound file"); MIX_LoadMUS
     //MIX_PlayMusic
+    menu_bg_music = Mix_LoadMUS("audio/menu-bg-music.mp3"); 
+    if (!menu_bg_music)
+    {
+        slog("Failed to load bg music");
+    }
+    Mix_PlayMusic(menu_bg_music, -1);
+    
 
     /*main game loop*/
     while(!done)
@@ -116,10 +130,12 @@ int main(int argc, char * argv[])
                 game_state = player_select_update(keys, mx, my);
                 break;
             case GS_PauseMenu: //change this later to make a pause menu remember!!
+                if(Mix_PlayingMusic()) Mix_PauseMusic();
                 pause_menu_draw(mx, my, mf, mouse, mouseGFC_Color);
                 game_state = pause_menu_update(keys, mx, my); 
                 break;
             case GS_MainLoop:
+                if (Mix_PausedMusic()) Mix_ResumeMusic();
                 entity_system_think();
                 entity_system_update();
                 //camera_bounds_check();
@@ -152,6 +168,8 @@ int main(int argc, char * argv[])
         //if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
+    Mix_FreeMusic(menu_bg_music);
+    Mix_CloseAudio();
     entity_free(player);
     enemies_close();
     player_classes_close();

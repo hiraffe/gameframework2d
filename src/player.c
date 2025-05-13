@@ -1,6 +1,7 @@
 #include "simple_logger.h"
 #include "simple_json.h"
 #include "gfc_input.h"
+#include "gfc_audio.h"
 
 #include "gf2d_draw.h"
 
@@ -112,6 +113,7 @@ Entity* player_new()
 	self->think = player_think;
 	self->update = player_update;
 	self->free = player_free;
+	self->onHit = player_on_hit;
 
 	data = gfc_allocate_array(sizeof(PlayerEntityData), 1);
 	if (data)
@@ -281,6 +283,9 @@ void player_on_hit(Entity* self, int dmg)
 {
 	self->health -= dmg;
 	slog("health: %f", self->health);
+	Mix_Chunk* sound = Mix_LoadWAV("audio/roblox-oof.wav");
+	int channel = Mix_PlayChannel(-1, sound, 0);
+
 	if (self->health <= 0) {
 		slog("You Died!");
 	}
@@ -367,6 +372,11 @@ void player_think(Entity* self)
 			{
 				data->tp++;
 				//slog("tp: %d", data->tp);
+				if (data->tp % 20 == 0)
+				{
+					Mix_Chunk* sound = Mix_LoadWAV("audio/near-miss.wav");
+					int channel = Mix_PlayChannel(-1, sound, 0);
+				}
 			}
 		}
 	}
