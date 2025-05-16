@@ -2,8 +2,6 @@
 #include "gfc_audio.h"
 
 #include "enemy.h"
-#include "monster.h"
-#include "spawner.h"
 
 void enemy_think(Entity* self);
 void enemy_update(Entity* self);
@@ -84,51 +82,14 @@ SJson* enemies_get_def_by_name(const char* name)
 	return NULL;
 }
 
-/*
-Entity* enemy_new_test()
-{
-	Entity* self;
-	EnemyEntityData* data;
-	self = entity_new();
-	if (!self)
-	{
-		slog("failed to spawn a new enemy entity");
-		return NULL;
-	}
-	self->sprite = gf2d_sprite_load_all(
-		"images/moth_girl.png",
-		128,
-		384,
-		2,
-		0);
-	self->frame = 1;
-	self->position = gfc_vector2d(1300, 150);
-	self->team = ETT_monster;
-	self->health = 100;
-	self->bounds = (GFC_Rect){ self->position.x,self->position.y,self->sprite->frame_w, self->sprite->frame_h };
-
-	self->onHit = enemy_on_hit;
-	self->think = enemy_think;
-	self->update = enemy_update;
-	self->free = enemy_free;
-
-	data = gfc_allocate_array(sizeof(EnemyEntityData), 1);
-	if (data)
-	{
-		data->monster_max = 10;
-	}
-	self->data = data;
-	return self;
-}
-*/
-
 Entity* enemy_new(const char* id, const char* name)
 {
 	Entity* self;
 	EnemyEntityData* data;
 	SJson* def;
 	const char* sprite_img;
-	int frame_w, frame_h, y, health, monsters, delay;
+	int frame_w, frame_h, y, monsters, delay, boss;
+	float health;
 
 	self = entity_new();
 	if (!self)
@@ -150,9 +111,9 @@ Entity* enemy_new(const char* id, const char* name)
 		0);
 	self->frame = 1;
 	sj_object_get_value_as_int(def, "y", &y);
-	self->position = gfc_vector2d(1300, y);
+	self->position = gfc_vector2d(1200, y); //non boss go further up
 	self->team = ETT_monster;
-	sj_object_get_value_as_int(def, "health", &health);
+	sj_object_get_value_as_float(def, "health", &health);
 	self->health = health;
 	self->bounds = (GFC_Rect){ self->position.x,self->position.y,self->sprite->frame_w, self->sprite->frame_h };
 
@@ -172,9 +133,43 @@ Entity* enemy_new(const char* id, const char* name)
 		data->delaying = 0;
 		sj_object_get_value_as_int(def, "delay", &delay);
 		data->delay = delay;
+		data->health_max = health;
+		sj_object_get_value_as_int(def, "boss", &boss);
+		data->boss = boss;
+		if (boss == 1)
+		{
+			self->position = gfc_vector2d(1400, y);	//boss stays behind
+			const char* enemy1, enemy2;
+			data->boss_data = gfc_allocate_array(sizeof(EnemyBossData), 1);
+			data->boss_data->enemy1 = sj_object_get_value_as_string(def, "first_enemy");
+			data->boss_data->enemy2 = sj_object_get_value_as_string(def, "second_enemy");
+			data->boss_data->enemy1_spawned = 0;
+			data->boss_data->enemy2_spawned = 0;
+		}
 	}
 	self->data = data;
 	return self;
+}
+
+void enemy_clear_all_monsters(Entity* self)
+{
+	EnemyEntityData* data = (EnemyEntityData*)self->data;
+	if (!self || !data) return;
+
+	//kill all monsters that were spawned by this guy
+	EntitySystem entity_system = entity_get_system();
+	for (int i = 0; i < entity_system.entity_max; i++)
+	{
+		Entity* child = &entity_system.entity_list[i];
+		if (!child || child->team != ETT_monster) continue;
+		MonsterEntityData* child_data = (MonsterEntityData*)child->data;
+		if (!child_data) continue;
+		//slog("child: %s, parent: %s", child_data->parent_id, data->id);
+		if (strcmp(child_data->parent_id, data->id) == 0)
+		{
+			monster_free(child);
+		}
+	}
 }
 
 void enemy_on_hit(Entity* self, int dmg)
@@ -196,24 +191,22 @@ void enemy_on_hit(Entity* self, int dmg)
 		Mix_Chunk* sound = Mix_LoadWAV("audio/vine-boom.wav");
 		int channel = Mix_PlayChannel(-1, sound, 0);
 
+		if (data->boss == 1)
+		{
+			//free the friends
+			EnemyBossData* boss_data = (EnemyBossData*)data->boss_data;
+			if (!boss_data) return;
+			enemy_clear_all_monsters(boss_data->friend1);
+			enemy_free(boss_data->friend1); 
+			enemy_clear_all_monsters(boss_data->friend2);
+			enemy_free(boss_data->friend2); 
+		}
+
 		Spawner* spawner = spawner_get_the();
 		spawner->alive--;
 		spawner->dead++;
 
-		//kill all monsters that were spawned by this guy
-		EntitySystem entity_system = entity_get_system();
-		for (int i = 0; i < entity_system.entity_max; i++)
-		{
-			Entity* child = &entity_system.entity_list[i];
-			if (!child || child->team != ETT_monster) continue;
-			MonsterEntityData* child_data = (MonsterEntityData*)child->data;
-			if (!child_data) continue;
-			//slog("child: %s, parent: %s", child_data->parent_id, data->id);
-			if (strcmp(child_data->parent_id, data->id) == 0)
-			{
-				monster_free(child);
-			}
-		}
+		enemy_clear_all_monsters(self);
 		enemy_free(self);
 		slog("enemy killed");
 	}
@@ -233,13 +226,17 @@ void enemy_spawn_monsters (Entity* self, const char* name)
 	{
 		monster = monster_new(MT_down, data->id);
 	}
-	else if (strcmp(name, "dude") == 0)
+	else if (strcmp(name, "ghost") == 0)
 	{
 		monster = monster_new(MT_smallwave, data->id);
 	}
 	else if (strcmp(name, "googly") == 0)
 	{
 		monster = monster_new(MT_largewave, data->id);
+	}
+	else if (strcmp(name, "girl") == 0)
+	{
+		monster = monster_new(MT_pfollow, data->id);
 	}
 
 	data->monster_count++;
@@ -282,8 +279,23 @@ void enemy_think(Entity* self)
 		data->monster_count = 0;
 	}
 
+	if (data->boss == 1)
+	{
+		EnemyBossData* boss_data = (EnemyBossData*)data->boss_data;
+		if (!boss_data) return;
 
-	
+		if (self->health < 2 * (data->health_max / 3) && boss_data->enemy1_spawned == 0)
+		{
+			slog("enemy1: %s", boss_data->enemy1);
+			boss_data->friend1 = enemy_new("boss_friend_1", boss_data->enemy1);
+			boss_data->enemy1_spawned = 1;
+		}
+		if (self->health < data->health_max/3 && boss_data->enemy2_spawned == 0)
+		{
+			boss_data->friend2 = enemy_new("boss_friend_2", boss_data->enemy2);
+			boss_data->enemy2_spawned = 1;
+		}
+	}
 	
 	gfc_vector2d_add(self->position, self->position, self->velocity);
 }
@@ -310,6 +322,13 @@ void enemy_free(Entity* self)
 	EnemyEntityData* data;
 	if (!self || !self->data) return;
 	data = self->data;
+	if (data->boss = 1)
+	{
+		EnemyBossData* boss_data;
+		boss_data = data->boss_data;
+		free(boss_data);
+		data->boss_data = NULL;
+	}
 	free(data);
 	self->data = NULL;
 	entity_free(self);

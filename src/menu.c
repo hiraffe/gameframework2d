@@ -13,6 +13,7 @@ static Sprite* back_button = NULL;
 static Sprite* fighter_button = NULL;
 static Sprite* defender_button = NULL;
 static Sprite* magician_button = NULL;
+static Sprite* title_card = NULL;
 
 static GFC_Vector4D start_bounds = { 500, 300, 200, 50 };
 static GFC_Vector4D editor_bounds = { 500, 370, 200, 50 };
@@ -66,12 +67,14 @@ void main_menu_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC_
     if (!menu_loaded)
     {
         menu_bg = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+        title_card = gf2d_sprite_load_image("images/titles/twoo-dee.png");
         start_button = gf2d_sprite_load_image("images/buttons/start.png");
         editor_button = gf2d_sprite_load_image("images/buttons/editor.png");
         quit_button = gf2d_sprite_load_image("images/buttons/quit.png");
     }
 
     gf2d_sprite_draw_image(menu_bg, gfc_vector2d(0,0));
+    gf2d_sprite_draw_image(title_card, gfc_vector2d(400,200));
     gf2d_sprite_draw_image(start_button, gfc_vector2d(500, 300));
     gf2d_sprite_draw_image(editor_button, gfc_vector2d(500, 370));
     gf2d_sprite_draw_image(quit_button, gfc_vector2d(500, 440));
@@ -113,6 +116,7 @@ void player_select_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouse
     if (!menu_loaded)
     {
         menu_bg = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+        title_card = gf2d_sprite_load_image("images/titles/character-select.png");
         fighter_button = gf2d_sprite_load_image("images/buttons/fighter.png");
         defender_button = gf2d_sprite_load_image("images/buttons/defender.png");
         magician_button = gf2d_sprite_load_image("images/buttons/magician.png");
@@ -120,6 +124,7 @@ void player_select_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouse
     }
 
     gf2d_sprite_draw_image(menu_bg, gfc_vector2d(0, 0));
+    gf2d_sprite_draw_image(title_card, gfc_vector2d(150, 200));
     gf2d_sprite_draw_image(fighter_button, gfc_vector2d(280, 370));
     gf2d_sprite_draw_image(defender_button, gfc_vector2d(500, 370));
     gf2d_sprite_draw_image(magician_button, gfc_vector2d(720, 370));
@@ -151,11 +156,13 @@ void pause_menu_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC
     if (!menu_loaded)
     {
         menu_bg = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+        title_card = gf2d_sprite_load_image("images/titles/pause.png");
         resume_button = gf2d_sprite_load_image("images/buttons/resume.png");
         back_button = gf2d_sprite_load_image("images/buttons/back.png");
     }
 
     gf2d_sprite_draw_image(menu_bg, gfc_vector2d(0, 0));
+    gf2d_sprite_draw_image(title_card, gfc_vector2d(450, 200));
     gf2d_sprite_draw_image(resume_button, gfc_vector2d(500, 370));
     gf2d_sprite_draw_image(back_button, gfc_vector2d(500, 440));
 
@@ -185,11 +192,13 @@ void game_over_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC_
     if (!menu_loaded)
     {
         menu_bg = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+        title_card = gf2d_sprite_load_image("images/titles/you-died.png");
         back_button = gf2d_sprite_load_image("images/buttons/back.png");
         quit_button = gf2d_sprite_load_image("images/buttons/quit.png");
     }
 
     gf2d_sprite_draw_image(menu_bg, gfc_vector2d(0, 0));
+    gf2d_sprite_draw_image(title_card, gfc_vector2d(400, 200));
     gf2d_sprite_draw_image(back_button, gfc_vector2d(500, 370));
     gf2d_sprite_draw_image(quit_button, gfc_vector2d(500, 440));
 
@@ -225,13 +234,13 @@ void win_menu_draw(int mx, int my, float mf, Sprite* mouse, GFC_Color mouseGFC_C
     if (!menu_loaded)
     {
         menu_bg = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
-        resume_button = gf2d_sprite_load_image("images/buttons/resume.png");
-        back_button = gf2d_sprite_load_image("images/buttons/back.png");
+        title_card = gf2d_sprite_load_image("images/titles/you-win.png");
+        quit_button = gf2d_sprite_load_image("images/buttons/quit.png");
     }
 
     gf2d_sprite_draw_image(menu_bg, gfc_vector2d(0, 0));
-    gf2d_sprite_draw_image(resume_button, gfc_vector2d(500, 370));
-    gf2d_sprite_draw_image(back_button, gfc_vector2d(500, 440));
+    gf2d_sprite_draw_image(title_card, gfc_vector2d(400, 200));
+    gf2d_sprite_draw_image(quit_button, gfc_vector2d(500, 370));
 
     //draw mouse
     gf2d_sprite_draw(mouse, gfc_vector2d(mx, my), NULL, NULL, NULL, NULL, &mouseGFC_Color, (int)mf);

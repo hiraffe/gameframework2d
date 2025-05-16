@@ -8,56 +8,64 @@
 			"frame_h": 384,
 			"fpl": 2,
 			"y": 150,
-			"health": 100,
-			"monsters": 1
+			"health": 500,
+			"monsters": 5,
+			"delay": 1500,
+			"boss": 1,
+			"first_enemy": "guy",
+			"second_enemy": "bug"
 		},
 		{
 			"name": "guy",
 			"displayName": "Thingy",
-			"image": "images/ed210.png",
+			"image": "images/enemy_guy.png",
 			"frame_w": 128,
 			"frame_h": 128,
-			"fpl": 16,
+			"fpl": 2,
 			"y": 150,
 			"health": 50,
 			"monsters": 20,
-			"delay": 1500
+			"delay": 1500,
+			"boss": 0
 		},
 		{
 			"name": "bug",
 			"displayName": "Bug",
-			"image": "images/space_bug.png",
+			"image": "images/enemy_bug.png",
 			"frame_w": 128,
 			"frame_h": 128,
-			"fpl": 16,
+			"fpl": 2,
 			"y": 450,
 			"health": 75,
 			"monsters": 15,
-			"delay": 3000
+			"delay": 3000,
+			"boss": 0
 		},
 		{
-			"name": "dude",
+			"name": "ghost",
 			"displayName": "Hello",
-			"image": "images/space_bug.png",
+			"image": "images/enemy_ghost.png",
 			"frame_w": 128,
 			"frame_h": 128,
-			"fpl": 16,
+			"fpl": 2,
 			"y": 200,
 			"health": 75,
 			"monsters": 1,
-			"delay": 300
+			"delay": 300,
+			"boss": 0
 		},
 		{
 			"name": "googly",
 			"displayName": "Bye",
-			"image": "images/space_bug.png",
+			"image": "images/enemy_googly.png",
 			"frame_w": 128,
 			"frame_h": 128,
-			"fpl": 16,
+			"fpl": 2,
 			"y": 400,
 			"health": 75,
 			"monsters": 20,
-			"delay": 150
+			"delay": 150,
+			"boss": 0
 		},
 		{
 			"name":"custom",
@@ -68,7 +76,9 @@
 			"fpl":16,
 			"y":450,
 			"health": 5,
-			"monsters": 10
+			"monsters": 10,
+			"delay": 1000,
+			"boss": 1
 		}
 	]
 }

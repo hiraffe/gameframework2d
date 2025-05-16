@@ -21,7 +21,7 @@ typedef struct
 	int cooldown;
 	int class_speed;
 	int speed;
-	int health_max;
+	float health_max;
 	const char* special;
 	PowerUp power;
 	int powerExpiry;
@@ -71,5 +71,7 @@ void player_change_class(const char* type);
  * @param dir the direction of the attack
  */
 void player_attack(Entity* self, ProjectileDir dir);
+
+void player_draw_ui();
 
 #endif

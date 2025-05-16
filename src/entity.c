@@ -154,10 +154,6 @@ void entity_draw(Entity* self)
 		gfc_vector2d_add(rect, rect, self->position);
 		gf2d_draw_rect(self->bounds, GFC_COLOR_RED);
 	//}
-
-		if (self->data) {
-			//draw nearmiss box
-		}
 }
 
 void entity_system_draw()

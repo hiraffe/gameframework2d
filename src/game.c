@@ -15,6 +15,7 @@
 #include "enemy.h"
 #include "menu.h"
 #include "spawner.h"
+#include "ui.h"
 //#include "particle.h"
 
 GameState game_state = GS_MainMenu;
@@ -161,14 +162,17 @@ int main(int argc, char * argv[])
                 //particle_system_draw();
 
                 //UI elements last
-                player_draw_ui();
-                //i just took out the mouse
+                //enemy_draw_healthbar();
+                //player_draw_ui();
+                draw_ui();
+                //i just took out the mouse 
+
+                game_state = check_winloss();
 
                 if (keys[SDL_SCANCODE_ESCAPE])
                 {
                     game_state = GS_PauseMenu; 
                 }
-                game_state = check_winloss();
                 break;
             case GS_Quit:
                 done = 1;

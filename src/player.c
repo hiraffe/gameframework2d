@@ -137,7 +137,8 @@ void player_change_class(const char* type)
 	if (!self || !self->data) return;
 	SJson* def, *color;
 	const char* sprite_img;
-	int frame_w, frame_h, fpl, health, speed, cooldown, neededtp;
+	int frame_w, frame_h, fpl, speed, cooldown, neededtp;
+	float health;
 	float r = 0, g = 0, b = 0, a = 0;
 
 	def = player_classes_get_def_by_name(type);
@@ -153,7 +154,7 @@ void player_change_class(const char* type)
 		fpl,
 		0);
 
-	sj_object_get_value_as_int(def, "health", &health);
+	sj_object_get_value_as_float(def, "health", &health);
 	self->health = health;
 	data->health_max = health;
 
@@ -181,32 +182,6 @@ void player_change_class(const char* type)
 
 	slog("class changed to %s", type);
 }
-
-void player_draw_ui()
-{
-	Entity* self = player_get_the();
-	PlayerEntityData* data = (PlayerEntityData*)self->data; 
-	if (!self || !self->data) return;
-	
-	float hp_percent = (float)self->health / data->health_max;
-	GFC_Rect hp_background = { 40, 650, 80, 16 };
-	GFC_Rect hp_foreground = { 40, 650, (int)(80 * hp_percent), 16 };
-	GFC_Rect hp_outline = { 40, 650, 80, 16 };
-
-	gf2d_draw_rect_filled(hp_background, gfc_color8(150, 0, 0, 255));
-	gf2d_draw_rect_filled(hp_foreground, gfc_color8(0, 255, 0, 255));  
-	gf2d_draw_rect(hp_outline, gfc_color8(0, 0, 0, 255));
-
-	float tp_percent = (float)data->tp / data->neededtp;
-	GFC_Rect tp_background = { 136, 650, 80, 16 };
-	GFC_Rect tp_foreground = { 136, 650, (int)(80 * tp_percent), 16 };
-	GFC_Rect tp_outline = { 136, 650, 80, 16 };
-
-	gf2d_draw_rect_filled(tp_background, GFC_COLOR_DARKBLUE);
-	gf2d_draw_rect_filled(tp_foreground, GFC_COLOR_YELLOW);
-	gf2d_draw_rect(tp_outline, gfc_color8(0, 0, 0, 255));
-}
-
 
 void player_attack(Entity* self, ProjectileDir dir)
 {
@@ -247,7 +222,8 @@ void player_attack(Entity* self, ProjectileDir dir)
 void player_on_hit(Entity* self, int dmg)
 {
 	self->health -= dmg;
-	slog("health: %f", self->health);
+	//slog("health: %f", self->health);
+
 	Mix_Chunk* sound = Mix_LoadWAV("audio/roblox-oof.wav");
 	int channel = Mix_PlayChannel(-1, sound, 0);
 

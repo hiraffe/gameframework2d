@@ -52,7 +52,7 @@ Entity* monster_new(MonsterType type, const char* parent_id)
 		switch (type)
 		{
 		case MT_pfollow:
-			self->position = gfc_vector2d(600, 300);
+			self->position = gfc_vector2d(50, 50);
 			break;
 		case MT_mfollow:
 			self->position = gfc_vector2d(600, 400);
