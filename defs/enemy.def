@@ -10,7 +10,7 @@
 			"y": 150,
 			"health": 500,
 			"monsters": 5,
-			"delay": 1500,
+			"delay": 2000,
 			"boss": 1,
 			"first_enemy": "guy",
 			"second_enemy": "bug"

@@ -219,6 +219,19 @@ void player_attack(Entity* self, ProjectileDir dir)
 	}
 }
 
+void player_special(Entity* self, const char* special)
+{
+	if (strcmp(special, "blast") == 0)
+	{
+		spawn_projectile(self->position, PD_right, PN_blast);
+	}
+	else if (strcmp(special, "healing") == 0)
+	{
+		self->health = self->health+25;
+
+	}
+}
+
 void player_on_hit(Entity* self, int dmg)
 {
 	self->health -= dmg;
@@ -242,6 +255,12 @@ void player_think(Entity* self)
 
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	Uint32 curr = SDL_GetTicks();
+
+	// make sure health doesnt go over
+	if (self->health >= data->health_max)
+	{
+		self->health = data->health_max;
+	}
 
 	// time powerups
 	if (data->power != PU_none && curr > data->powerExpiry)
@@ -285,6 +304,16 @@ void player_think(Entity* self)
 	}
 	else if (keys[SDL_SCANCODE_RIGHT]) {
 		player_attack(self, PD_right);
+	}
+
+	//special
+	if (keys[SDL_SCANCODE_Q])
+	{
+		if (data->tp == data->neededtp)
+		{
+			player_special(self, data->special);
+			data->tp = 0;
+		}
 	}
 
 	//gfc_vector2d_add(self->position, self->position, self->velocity);

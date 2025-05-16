@@ -7,7 +7,7 @@ void projectile_think(Entity* self);
 void projectile_update(Entity* self);
 void projectile_free(Entity* self);
 
-Entity* projectile_new(GFC_Vector2D start, ProjectileDir dir)
+Entity* projectile_new(GFC_Vector2D start, int dir)
 {
 	Entity* self;
 	ProjectileData* data;
@@ -72,6 +72,17 @@ void spawn_projectile(GFC_Vector2D start, ProjectileDir dir, ProjectileNum num)
 		Entity* projectile2 = projectile_new(gfc_vector2d(start.x, start.y+12), dir);
 		Entity* projectile3 = projectile_new(gfc_vector2d(start.x, start.y-12), dir);
 		if (!projectile1 || !projectile2 || !projectile3) return;
+	}
+	else if (num == PN_blast)
+	{
+		Entity* projectile1 = projectile_new(gfc_vector2d(start.x + 36, start.y + 6), dir);
+		Entity* projectile2 = projectile_new(gfc_vector2d(start.x + 36, start.y + 12), dir);
+		Entity* projectile3 = projectile_new(gfc_vector2d(start.x + 36, start.y - 6), dir);
+		Entity* projectile4 = projectile_new(gfc_vector2d(start.x + 36, start.y - 12), dir);
+		Entity* projectile5 = projectile_new(gfc_vector2d(start.x + 36, start.y + 6), dir);
+		Entity* projectile6 = projectile_new(gfc_vector2d(start.x + 36, start.y + 12), dir);
+		Entity* projectile7 = projectile_new(gfc_vector2d(start.x + 36, start.y - 6), dir);
+		Entity* projectile8 = projectile_new(gfc_vector2d(start.x + 36, start.y - 12), dir);
 	}
 	else if (num == PN_all)
 	{

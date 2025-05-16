@@ -249,7 +249,11 @@ void enemy_think(Entity* self)
 	Uint32 now = SDL_GetTicks();
 
 	//move into position
-	if (self->position.x >= 1000)
+	if (data->boss == 1 && self->position.x >= 1100)
+	{
+		self->position.x -= 4;
+	}
+	else if (self->position.x >= 900)
 	{
 		self->position.x -= 4;
 	}

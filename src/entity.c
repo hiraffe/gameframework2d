@@ -149,10 +149,10 @@ void entity_draw(Entity* self)
 
 	//if (_DRAWBOUNDS)
 	//{
-		GFC_Rect rect;
-		gfc_rect_copy(rect, self->bounds);
-		gfc_vector2d_add(rect, rect, self->position);
-		gf2d_draw_rect(self->bounds, GFC_COLOR_RED);
+	//	GFC_Rect rect;
+	//	gfc_rect_copy(rect, self->bounds);
+	//	gfc_vector2d_add(rect, rect, self->position);
+	//	gf2d_draw_rect(self->bounds, GFC_COLOR_RED);
 	//}
 }
 

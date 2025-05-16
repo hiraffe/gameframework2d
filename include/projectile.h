@@ -17,6 +17,7 @@ typedef enum
 	PN_single,
 	PN_double,
 	PN_triple,
+	PN_blast,
 	PN_all
 }ProjectileNum; //maybe we can make this a flag instead idk
 
@@ -31,6 +32,6 @@ typedef struct
  * @param position where to spawn it
  * @return NULL on error, or a pointer to the spawned player entity
  */
-Entity* projectile_new(GFC_Vector2D position);
+Entity* projectile_new(GFC_Vector2D start, int dir);
 
 #endif
